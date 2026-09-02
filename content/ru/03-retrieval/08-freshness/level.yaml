@@ -1,0 +1,8 @@
+id: retrieval/08-freshness
+track: retrieval
+order: 8
+title: Свежесть против похожести
+idea: Свежесть не выбирает вместо похожести — она её обесценивает.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/09-boss
