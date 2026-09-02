@@ -1,0 +1,8 @@
+id: context/02-boundaries
+track: context
+order: 2
+title: Границы источников
+idea: Отбор по теме вытаскивает строки из документов вместе с их границами.
+minutes: 18
+needs_api_key: false
+unlocks: context/03-shape
