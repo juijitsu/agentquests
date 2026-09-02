@@ -8,7 +8,11 @@
 python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py
 ```
 
-No API key, no install, no network — levels run on recorded model behaviour.
+No API key, no dependencies, no network — levels run on recorded model behaviour.
+
+No Python on this machine? Open the repo in a ready-made environment instead — same version the tests run on:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/juijitsu/agentquests)
 
 ---
 
