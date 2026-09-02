@@ -2,7 +2,7 @@
 
 **Learn AI engineering by shipping.** Eight career tracks, every level verified by tests — you can't skip by reading.
 
-> **Status: early.** The Foundations track is complete — 8 levels, playable end to end. The other 68 levels are specified but not written yet.
+> **Status: early.** Foundations is complete — 8 levels, playable end to end — and Agent core is 6 levels in. The other 62 are specified but not written yet.
 
 ```bash
 python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py
@@ -39,7 +39,7 @@ Not another course you read. Each level hands you theory, then the method, then 
 | 07 | Operations | AI Platform Engineer | 9 |
 | 08 | Data | AI Data Engineer | 8 |
 
-All eight tracks run in one world: a freight company routing cargo from China to Europe. The agent you build in track 01 is the one you attack in track 05.
+All eight tracks run in one world: a US freight company moving cargo from the Texas border to the East Coast. The agent you build in track 01 is the one you attack in track 05.
 
 ## Roadmap
 
