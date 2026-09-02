@@ -1,0 +1,8 @@
+id: evaluation/04-judge
+track: evaluation
+order: 4
+title: Судья подыгрывает
+idea: Автор знает, что хотел сказать, и потому засчитывает себе уклончивое как точное.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/05-leak
