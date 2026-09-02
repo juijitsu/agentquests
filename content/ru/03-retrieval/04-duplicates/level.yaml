@@ -1,0 +1,8 @@
+id: retrieval/04-duplicates
+track: retrieval
+order: 4
+title: Пять копий одного
+idea: Место в подборке даётся за прибавку к уже набранному, а не за похожесть.
+minutes: 20
+needs_api_key: false
+unlocks: retrieval/05-multi-query
