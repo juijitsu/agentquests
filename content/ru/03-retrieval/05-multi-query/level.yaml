@@ -1,0 +1,8 @@
+id: retrieval/05-multi-query
+track: retrieval
+order: 5
+title: Составной вопрос
+idea: Один вектор на два вопроса попадает между ними и не отвечает ни на один.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/06-nothing-found
