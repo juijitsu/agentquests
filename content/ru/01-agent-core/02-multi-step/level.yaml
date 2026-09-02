@@ -1,0 +1,8 @@
+id: agent-core/02-multi-step
+track: agent-core
+order: 2
+title: Многошаговость
+idea: Условие завершения определяется задачей, а не тем, что модель замолчала.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/03-compaction
