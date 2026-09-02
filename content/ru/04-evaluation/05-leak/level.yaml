@@ -1,0 +1,8 @@
+id: evaluation/05-leak
+track: evaluation
+order: 5
+title: Тест протёк в промпт
+idea: Случай, лежащий в промпте, измеряет память агента, а не его работу.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/06-one-run
