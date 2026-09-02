@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHECK = ROOT / "engine" / "check.py"
+FIELDS = {"id", "track", "order", "title", "idea", "minutes", "needs_api_key", "unlocks"}
 
 for _s in (sys.stdout, sys.stderr):
     try:
@@ -26,9 +27,42 @@ def run(agent: Path) -> int:
     ).returncode
 
 
+def meta(level: Path) -> dict:
+    # level.yaml — плоские «ключ: значение» по одному в строке, парсер не нужен.
+    text = (level.parent / "level.yaml").read_text(encoding="utf-8")
+    return dict(line.split(": ", 1) for line in text.splitlines() if ": " in line)
+
+
+def chain(levels: list[Path]) -> list[str]:
+    """Метаданные никто не читает, поэтому ломаются они молча.
+
+    Проверяем два свойства: файл разбирается в полный набор полей и unlocks
+    ведёт на существующий уровень. Последнему вести пока некуда.
+    """
+    failures, cards = [], {}
+    for level in levels:
+        card = meta(level)
+        if set(card) == FIELDS:
+            cards[level] = card
+        else:
+            print(f"  ✗ {level.parent.name:<44} level.yaml: полей {len(card)} из {len(FIELDS)}")
+            failures.append(level.parent.name)
+
+    ids = {card["id"] for card in cards.values()}
+    for level, card in cards.items():
+        if level is not levels[-1] and card["unlocks"] not in ids:
+            print(f"  ✗ {level.parent.name:<44} unlocks → {card['unlocks']}: такого уровня нет")
+            failures.append(level.parent.name)
+
+    if not failures:
+        print(f"  ✓ метаданные: {len(levels)} уровней, цепочка цела")
+    return failures
+
+
 def main() -> int:
-    failures = []
-    for level in sorted(ROOT.glob("content/*/*/*/scenario.py")):
+    levels = sorted(ROOT.glob("content/*/*/*/scenario.py"))
+    failures = chain(levels)
+    for level in levels:
         d = level.parent
         expected = [(d / "solution/agent.py", 0)]
         expected += [(p / "agent.py", 1) for p in sorted((d / "starter").iterdir())]
