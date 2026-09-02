@@ -56,10 +56,8 @@ def main() -> int:
         answer, steps = module.run("Где груз KZ-4471?")
     except NotImplementedError:
         print("  ✗ run() ещё не реализована")
-        print("
-  FAIL  Это заготовка для сложности «профессионал».")
-        print("        Соберите цикл сами или возьмите starter/advanced.
-")
+        print("\n  FAIL  Это заготовка для сложности «профессионал».")
+        print("        Соберите цикл сами или возьмите starter/advanced.\n")
         return 1
     except RecursionError:
         print("  \u2717 агент зациклился")
