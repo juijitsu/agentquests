@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CHECK = ROOT / "engine" / "check.py"
 FIELDS = {"id", "track", "order", "title", "idea", "minutes", "needs_api_key", "unlocks"}
-RUNNABLE = {".py", ".ts"}
+RUNNABLE = {".py", ".ts", ".sql"}
 
 
 def agent_file(folder: Path) -> Path | None:

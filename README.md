@@ -2,7 +2,7 @@
 
 **Learn AI engineering by shipping.** Eight career tracks, every level verified by tests — you can't skip by reading.
 
-> **Status: early.** Two tracks are complete — Foundations (8 levels) and Agent core (10) — plus three Context levels: 21 playable end to end. The other 55 are specified but not written yet.
+> **Status: early.** Two tracks are complete — Foundations (8 levels) and Agent core (10) — plus four Context levels: 22 playable end to end. The other 54 are specified but not written yet.
 
 ```bash
 python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py
@@ -10,7 +10,7 @@ python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/nov
 
 No API key, no packages to install, no network — levels run on recorded model behaviour.
 
-Each level is written in the language the job is actually done in: Python for agent loops, TypeScript where data shape is the point, SQL and shell further on. One command runs them all — the runner picks the right one. TypeScript levels need Node 24, which strips types with no build step.
+Each level is written in the language the job is actually done in: Python for agent loops, TypeScript where data shape is the point, SQL where the question belongs to the store. One command runs them all — the runner picks the right one. TypeScript levels need Node 24, which strips types with no build step.
 
 No Python on this machine? Open the repo in a ready-made environment instead — same version the tests run on:
 

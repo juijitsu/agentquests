@@ -1,0 +1,8 @@
+id: context/04-freshness
+track: context
+order: 4
+title: Свежесть
+idea: Данные дописываются, а не переписываются — без отбора по времени берётся первое попавшееся.
+minutes: 20
+needs_api_key: false
+unlocks: context/05-conflict
