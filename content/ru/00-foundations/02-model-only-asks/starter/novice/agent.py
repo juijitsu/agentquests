@@ -1,4 +1,4 @@
-"""Уровень 01 · эталон. От novice отличается одной строкой."""
+"""Уровень 02 · новичок. Цикл написан целиком, но две проверки стоят не в том порядке."""
 
 from scenario import Model, TOOLS, run_tool
 
@@ -13,7 +13,8 @@ def run(question: str) -> tuple[str, int]:
         response = model.call(messages, tools=TOOLS)
         messages.append({"role": "assistant", "content": response.text})
 
-        if not response.tool_calls:
+        # Модель прислала текст — значит всё готово?
+        if response.text:
             return response.text, step
 
         for call in response.tool_calls:

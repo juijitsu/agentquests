@@ -1,4 +1,4 @@
-"""Уровень 01 · продвинутый. Блок выполнения инструментов надо дописать."""
+"""Уровень 02 · продвинутый. Разбор ответа модели надо дописать."""
 
 from scenario import Model, TOOLS, run_tool
 
@@ -14,10 +14,7 @@ def run(question: str) -> tuple[str, int]:
         response = model.call(messages, tools=TOOLS)
         messages.append({"role": "assistant", "content": response.text})
 
-        if not response.tool_calls:
-            return response.text, step
-
-        # Здесь: выполнить каждый запрошенный инструмент через run_tool
-        # и вернуть результат модели через messages.
+        # Здесь: разобрать ответ так, чтобы просьбы модели выполнялись,
+        # а текст уходил наружу только когда просьб больше нет.
 
     raise RecursionError("исчерпан лимит итераций")

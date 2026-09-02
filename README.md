@@ -2,7 +2,13 @@
 
 **Learn AI engineering by shipping.** Eight career tracks, every level verified by tests — you can't skip by reading.
 
-> **Status: early.** There is nothing to run yet. The curriculum is designed, the engine and the first track are being built. Star the repo if you want to know when it opens.
+> **Status: early.** Two levels of the Foundations track are playable. The remaining 74 are specified but not written yet.
+
+```bash
+python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py
+```
+
+No API key, no install, no network — levels run on recorded model behaviour.
 
 ---
 
@@ -33,7 +39,7 @@ All eight tracks run in one world: a freight company routing cargo from China to
 
 ## Roadmap
 
-- [ ] Level engine and check runner
+- [x] Level engine and check runner
 - [ ] Foundations track
 - [ ] Agent core track
 - [ ] Public launch

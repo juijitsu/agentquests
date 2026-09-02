@@ -1,4 +1,4 @@
-"""Уровень 01 · эталон. От novice отличается одной строкой."""
+"""Уровень 02 · эталон. Инструменты разбираются раньше текста."""
 
 from scenario import Model, TOOLS, run_tool
 
@@ -13,11 +13,12 @@ def run(question: str) -> tuple[str, int]:
         response = model.call(messages, tools=TOOLS)
         messages.append({"role": "assistant", "content": response.text})
 
-        if not response.tool_calls:
-            return response.text, step
+        if response.tool_calls:
+            for call in response.tool_calls:
+                result = run_tool(call.name, call.arguments)
+                messages.append({"role": "tool", "content": result})
+            continue
 
-        for call in response.tool_calls:
-            result = run_tool(call.name, call.arguments)
-            messages.append({"role": "tool", "content": result})
+        return response.text, step
 
     raise RecursionError("исчерпан лимит итераций")

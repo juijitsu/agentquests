@@ -1,6 +1,9 @@
-"""Раннер проверок. Один на все уровни: уровень описывает условие, а не реализует его.
+"""Раннер проверок. Общий для всех уровней и намеренно тупой.
 
-    python engine/check.py <путь к решению>
+    python engine/check.py <путь к agent.py>
+
+Всю специфику уровня знает его собственный scenario.py: какая модель,
+какие инструменты, что считать успехом. Раннер только запускает и печатает.
 """
 
 import importlib.util
@@ -8,87 +11,92 @@ import sys
 import traceback
 from pathlib import Path
 
-# Консоль Windows по умолчанию не в UTF-8 — без этого падает на первом же символе.
-for stream in (sys.stdout, sys.stderr):
+for _s in (sys.stdout, sys.stderr):
     try:
-        stream.reconfigure(encoding="utf-8")
+        _s.reconfigure(encoding="utf-8")  # консоль Windows иначе падает на «✓»
     except Exception:
         pass
 
+OK, NO = "\u2713", "\u2717"
 
-def repo_root(start: Path) -> Path:
-    """Корень — ближайшая папка вверх, где лежит engine/. Не зависит от глубины уровня."""
+
+def find_level(start: Path) -> Path | None:
     for parent in [start, *start.parents]:
-        if (parent / "engine" / "model.py").exists():
+        if (parent / "scenario.py").exists():
+            return parent
+    return None
+
+
+def find_root(start: Path) -> Path:
+    for parent in [start, *start.parents]:
+        if (parent / "engine" / "kit.py").exists():
             return parent
     return Path.cwd()
 
-EXPECTED = "Хоргос"
-MAX_STEPS = 3
 
-
-def load(path: Path):
-    # Пути настраивает раннер, а не ученик: в файле уровня не должно быть плумбинга.
-    root = repo_root(path.resolve())
-    if str(root) not in sys.path:
-        sys.path.insert(0, str(root))
-    spec = importlib.util.spec_from_file_location("solution", path)
+def load(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
 
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("укажите путь к решению")
+        print("укажите путь к agent.py")
         return 2
 
-    path = Path(sys.argv[1])
-    if not path.exists():
-        print(f"FAIL  файла нет: {path}")
+    agent_path = Path(sys.argv[1]).resolve()
+    if not agent_path.exists():
+        print(f"FAIL  файла нет: {agent_path}")
         return 1
 
-    print(f"\n  Уровень 01 · Что вообще происходит")
-    print(f"  Решение: {path}\n")
+    level_dir = find_level(agent_path)
+    if level_dir is None:
+        print(f"FAIL  рядом с решением не найден scenario.py")
+        return 2
+
+    # Пути настраивает раннер: в файле ученика не должно быть плумбинга.
+    for p in (str(find_root(agent_path)), str(level_dir)):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+
+    scenario = load(level_dir / "scenario.py", "scenario")
+
+    print(f"\n  {scenario.TITLE}")
+    print(f"  {agent_path.name} \u00b7 {agent_path.parent.name}\n")
+
+    if getattr(scenario, "BRIEF", None):
+        for line in scenario.BRIEF.strip().splitlines():
+            print("  " + line)
+        print()
 
     try:
-        module = load(path)
-        answer, steps = module.run("Где груз KZ-4471?")
+        agent = load(agent_path, "agent")
+        result = scenario.play(agent)
     except NotImplementedError:
-        print("  ✗ run() ещё не реализована")
+        print(f"  {NO} run() ещё не реализована")
         print("\n  FAIL  Это заготовка для сложности «профессионал».")
-        print("        Соберите цикл сами или возьмите starter/advanced.\n")
+        print("        Соберите решение сами или возьмите starter/advanced.\n")
         return 1
-    except RecursionError:
-        print("  \u2717 агент зациклился")
-        print("\n  FAIL  Модель просит инструмент снова и снова.")
-        print("        Значит она не видит его результата — посмотрите,")
-        print("        что происходит с ответом инструмента после вызова.\n")
+    except Exception as exc:
+        hint = scenario.explain(exc) if hasattr(scenario, "explain") else None
+        print(f"  {NO} решение упало: {type(exc).__name__}")
+        if hint:
+            print(f"\n  FAIL  {hint}\n")
+        else:
+            print()
+            traceback.print_exc()
+            print()
         return 1
-    except Exception:
-        print("  \u2717 решение упало с ошибкой:\n")
-        traceback.print_exc()
-        return 1
 
-    ok = True
+    verdicts = scenario.verify(result)
+    ok = all(passed for passed, _ in verdicts)
+    for passed, message in verdicts:
+        print(f"  {OK if passed else NO} {message}")
 
-    if answer is None or not isinstance(answer, str):
-        print("  \u2717 run() не вернул строку с ответом")
-        ok = False
-    elif EXPECTED not in answer:
-        print(f"  \u2717 в ответе нет ожидаемого: {answer!r}")
-        print("        агент не донёс результат инструмента до финального ответа")
-        ok = False
-    else:
-        print(f"  \u2713 агент ответил: {answer}")
-
-    if steps > MAX_STEPS:
-        print(f"  \u2717 потрачено итераций: {steps}, допустимо {MAX_STEPS}")
-        ok = False
-    elif ok:
-        print(f"  \u2713 уложился в {steps} итерации из {MAX_STEPS}")
-
-    print("\n  " + ("PASS  уровень 02 открыт\n" if ok else "FAIL\n"))
+    print("\n  " + ("PASS  следующий уровень открыт\n" if ok else "FAIL\n"))
     return 0 if ok else 1
 
 

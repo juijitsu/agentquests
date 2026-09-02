@@ -1,0 +1,8 @@
+id: foundations/02-model-only-asks
+track: foundations
+order: 2
+title: Модель только просит
+idea: Модель не выполняет действий — она возвращает просьбу их выполнить.
+minutes: 16
+needs_api_key: false
+unlocks: foundations/03-no-memory

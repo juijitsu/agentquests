@@ -1,10 +1,6 @@
-"""Уровень 01 · сложность: новичок
+"""Уровень 01 · новичок. Не хватает одной строки, она помечена TODO."""
 
-Цикл написан целиком. Не хватает одной строки — она помечена TODO.
-"""
-
-from engine.model import Model
-from engine.tools import TOOLS, run_tool
+from scenario import Model, TOOLS, run_tool
 
 MAX_STEPS = 10
 
@@ -25,7 +21,6 @@ def run(question: str) -> tuple[str, int]:
             print(f"  [{step}] {call.name}({call.arguments}) -> {result}")
 
             # TODO: результат посчитан, но модель его не увидит.
-            #       Положите его в messages сообщением с ролью "tool".
-            #       Одна строка.
+            #       Положите его в messages сообщением с ролью "tool". Одна строка.
 
     raise RecursionError("исчерпан лимит итераций")
