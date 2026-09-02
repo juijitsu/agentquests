@@ -1,0 +1,8 @@
+id: context/08-boss
+track: context
+order: 8
+title: Босс: бриф под бюджет
+idea: Под давлением бюджета первым хочется выбросить именно то, что нельзя.
+minutes: 45
+needs_api_key: false
+unlocks: retrieval/01
