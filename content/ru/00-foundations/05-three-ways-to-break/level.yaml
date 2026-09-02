@@ -1,0 +1,8 @@
+id: foundations/05-three-ways-to-break
+track: foundations
+order: 5
+title: Три способа сломаться
+idea: Зацикливание, переполнение контекста и выдуманные аргументы — и всё.
+minutes: 20
+needs_api_key: false
+unlocks: foundations/06-error-as-message
