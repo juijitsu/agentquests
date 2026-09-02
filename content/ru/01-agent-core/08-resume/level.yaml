@@ -1,0 +1,8 @@
+id: agent-core/08-resume
+track: agent-core
+order: 8
+title: Состояние и возобновление
+idea: История разговора умирает вместе с процессом — состояние работы обязано его пережить.
+minutes: 22
+needs_api_key: false
+unlocks: agent-core/09-human
