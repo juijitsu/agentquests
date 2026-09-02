@@ -1,0 +1,8 @@
+id: evaluation/01-one-example
+track: evaluation
+order: 1
+title: Один пример — не измерение
+idea: Проверка правки на том случае, ради которого её делали, измеряет намерение, а не результат.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/02-exact-match
