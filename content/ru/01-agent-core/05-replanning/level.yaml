@@ -1,0 +1,8 @@
+id: agent-core/05-replanning
+track: agent-core
+order: 5
+title: Перепланирование
+idea: План стал невыполним — заметить обязан код, придумать обход обязана модель.
+minutes: 25
+needs_api_key: false
+unlocks: agent-core/06-self-check
