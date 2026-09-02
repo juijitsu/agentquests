@@ -2,7 +2,7 @@
 
 **Learn AI engineering by shipping.** Eight career tracks, every level verified by tests — you can't skip by reading.
 
-> **Status: early.** Two levels of the Foundations track are playable. The remaining 74 are specified but not written yet.
+> **Status: early.** The Foundations track is complete — 8 levels, playable end to end. The other 68 levels are specified but not written yet.
 
 ```bash
 python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py
@@ -40,7 +40,7 @@ All eight tracks run in one world: a freight company routing cargo from China to
 ## Roadmap
 
 - [x] Level engine and check runner
-- [ ] Foundations track
+- [x] Foundations track
 - [ ] Agent core track
 - [ ] Public launch
 - [ ] Remaining tracks

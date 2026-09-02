@@ -1,0 +1,8 @@
+id: foundations/08-read-someone-elses-agent
+track: foundations
+order: 8
+title: Финал: читаем чужого агента
+idea: Всё предыдущее сразу, на коде, который вы не писали.
+minutes: 30
+needs_api_key: false
+unlocks: agent-core/01
