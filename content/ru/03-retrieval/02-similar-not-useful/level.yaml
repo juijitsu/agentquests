@@ -1,0 +1,8 @@
+id: retrieval/02-similar-not-useful
+track: retrieval
+order: 2
+title: Похожее не значит нужное
+idea: Похожесть отвечает «про то ли это», а не «есть ли там ответ».
+minutes: 20
+needs_api_key: false
+unlocks: retrieval/03-chunks
