@@ -1,0 +1,8 @@
+id: foundations/07-first-number
+track: foundations
+order: 7
+title: Первое число
+idea: Пока нет счёта, у вас впечатление, а не система.
+minutes: 20
+needs_api_key: false
+unlocks: foundations/08-read-someone-elses-agent
