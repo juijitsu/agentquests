@@ -1,0 +1,8 @@
+id: evaluation/03-average
+track: evaluation
+order: 3
+title: Среднее прячет провал
+idea: Общий процент — среднее по разнородному, и он тем выше, чем больше в наборе лёгких случаев.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/04-judge
