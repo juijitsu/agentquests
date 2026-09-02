@@ -1,0 +1,8 @@
+id: retrieval/07-hybrid
+track: retrieval
+order: 7
+title: Гибрид: номер и смысл
+idea: Обозначение несёт тождество, а не смысл, и смысловому поиску оно неразличимо.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/08-freshness
