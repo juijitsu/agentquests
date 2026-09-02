@@ -1,0 +1,8 @@
+id: agent-core/04-scratchpad
+track: agent-core
+order: 4
+title: Блокнот агента
+idea: Заранее известно не всё — важное всплывает по дороге и должно пережить сворачивание.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/05-replanning
