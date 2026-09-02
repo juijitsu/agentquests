@@ -1,0 +1,8 @@
+id: context/01-more-is-worse
+track: context
+order: 1
+title: Больше — не лучше
+idea: Факт внутри окна ещё не значит, что модель его увидит.
+minutes: 18
+needs_api_key: false
+unlocks: context/02-boundaries
