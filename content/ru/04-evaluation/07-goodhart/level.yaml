@@ -1,0 +1,8 @@
+id: evaluation/07-goodhart
+track: evaluation
+order: 7
+title: Метрика оптимизируется, цель нет
+idea: Признак, которым заменили цель, оптимизируется отдельно от неё — и обычно в ущерб ей.
+minutes: 22
+needs_api_key: false
+unlocks: evaluation/08-boss
