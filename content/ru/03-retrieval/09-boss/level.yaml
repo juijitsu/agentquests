@@ -1,0 +1,8 @@
+id: retrieval/09-boss
+track: retrieval
+order: 9
+title: Босс: поисковик целиком
+idea: Половина вопроса имеет ответ, спрятанный за четырьмя препятствиями, вторая не имеет его вовсе.
+minutes: 45
+needs_api_key: false
+unlocks: evaluation/01
