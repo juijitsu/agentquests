@@ -7,7 +7,7 @@ TOOLS = [
         "name": "check_border_status",
         "description": (
             "Показывает очередь и время ожидания на погранпереходе. "
-            "Допустимые значения crossing: Хоргос, Достык, Актау."
+            "Допустимые значения crossing: Laredo, El Paso, Otay Mesa."
         ),
         "parameters": {"crossing": "string"},
     },

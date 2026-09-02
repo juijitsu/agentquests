@@ -3,20 +3,20 @@
 from engine.kit import Response, ToolCall
 
 TITLE = "Уровень 06 · Ошибка как сообщение"
-BRIEF = """Клиент написал «Хоргус» вместо «Хоргос».
+BRIEF = """Клиент написал «Loredo» вместо «Laredo».
 Диспетчер ответил, что перехода не существует, и на этом закончил."""
 
 CROSSINGS = {
-    "Хоргос": "очередь 40 машин, ожидание около 6 часов",
-    "Достык": "очередь 12 машин, ожидание около 2 часов",
-    "Актау": "паром по расписанию, ожидание около суток",
+    "Laredo": "очередь 40 машин, ожидание около 6 часов",
+    "El Paso": "очередь 12 машин, ожидание около 2 часов",
+    "Otay Mesa": "очередь 25 машин, ожидание около 4 часов",
 }
 
 ASKED = []  # какие значения агент пробовал
 
 TOOLS = [{
     "name": "check_border_status",
-    "description": "Показывает очередь на погранпереходе. Значения: Хоргос, Достык, Актау.",
+    "description": "Показывает очередь на погранпереходе. Значения: Laredo, El Paso, Otay Mesa.",
     "parameters": {"crossing": "string"},
 }]
 
@@ -40,15 +40,15 @@ class Model:
     def call(self, messages, tools):
         tool_notes = [m["content"] for m in messages if m.get("role") == "tool"]
         if not tool_notes:
-            return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "Хоргус"})])
+            return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "Loredo"})])
         if "не существует" in tool_notes[-1]:
-            return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "Хоргос"})])
+            return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "Laredo"})])
         return Response(text=f"По вашему запросу: {tool_notes[-1]}")
 
 
 def play(agent):
     ASKED.clear()
-    return agent.run("Что сейчас на переходе Хоргус?")
+    return agent.run("Что сейчас на переходе Loredo?")
 
 
 def explain(exc):

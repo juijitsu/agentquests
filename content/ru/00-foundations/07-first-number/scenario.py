@@ -6,8 +6,8 @@ BRIEF = """Пять жалоб за неделю, а на ваших прове�
 
 RESULT = {"n": 0}
 
-QUEUES = {"Хоргос": "очередь 40 машин", "Достык": "очередь 12 машин"}
-SHIPMENTS = {"KZ-4471": "в пути, прибытие через 4 дня"}
+QUEUES = {"Laredo": "очередь 40 машин", "El Paso": "очередь 12 машин"}
+SHIPMENTS = {"TX-4471": "в пути, прибытие через 4 дня"}
 
 
 def _common(question):
@@ -21,8 +21,8 @@ def _common(question):
             return f"груз {code}: {state}"
     if "срок" in q or "когда" in q:
         return "срок доставки: 11 дней"
-    if "хоргус" in q:
-        return "перехода 'Хоргус' не существует. Доступны: Хоргос, Достык"
+    if "loredo" in q:
+        return "перехода 'Loredo' не существует. Доступны: Laredo, El Paso"
     return None
 
 

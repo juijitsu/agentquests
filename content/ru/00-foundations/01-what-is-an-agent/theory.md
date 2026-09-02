@@ -18,7 +18,7 @@
 Вот он целиком:
 
 ```python
-messages = [{"role": "user", "content": "Где груз KZ-4471?"}]
+messages = [{"role": "user", "content": "Где груз TX-4471?"}]
 
 while True:
     response = model.call(messages, tools=TOOLS)

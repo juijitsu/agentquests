@@ -32,12 +32,12 @@ class Model:
             return Response(text=text)
         return Response(text=text, tool_calls=[
             ToolCall("send_notification",
-                     {"shipment_id": "KZ-4471", "text": "Груз в пути, прибытие через 4 дня"})])
+                     {"shipment_id": "TX-4471", "text": "Груз в пути, прибытие через 4 дня"})])
 
 
 def play(agent):
     JOURNAL.clear()
-    return agent.run("Уведоми клиента по грузу KZ-4471")
+    return agent.run("Уведоми клиента по грузу TX-4471")
 
 
 def verify(result):

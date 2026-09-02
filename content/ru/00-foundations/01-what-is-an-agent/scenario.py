@@ -7,8 +7,8 @@ BRIEF = """Первый день в транспортной компании. �
 которого начал писать уволившийся разработчик. Он не отвечает."""
 
 SHIPMENTS = {
-    "KZ-4471": "в пути, переход Хоргос, прибытие через 4 дня",
-    "KZ-5120": "на таможенном оформлении в Актау",
+    "TX-4471": "в пути, переход Laredo, прибытие через 4 дня",
+    "TX-5120": "на таможенном оформлении в Otay Mesa",
 }
 
 TOOLS = [{
@@ -31,12 +31,12 @@ class Model:
         seen = next((m["content"] for m in messages if m.get("role") == "tool"), None)
         if seen is None:
             return Response(tool_calls=[ToolCall("get_shipment_status",
-                                                 {"shipment_id": "KZ-4471"})])
-        return Response(text=f"Груз KZ-4471 сейчас: {seen}")
+                                                 {"shipment_id": "TX-4471"})])
+        return Response(text=f"Груз TX-4471 сейчас: {seen}")
 
 
 def play(agent):
-    return agent.run("Где груз KZ-4471?")
+    return agent.run("Где груз TX-4471?")
 
 
 def explain(exc):
@@ -50,7 +50,7 @@ def explain(exc):
 def verify(result):
     answer, steps = result
     return [
-        (isinstance(answer, str) and "Хоргос" in answer,
+        (isinstance(answer, str) and "Laredo" in answer,
          f"ответ агента: {answer}"),
         (steps <= 3, f"итераций потрачено: {steps} (допустимо 3)"),
     ]

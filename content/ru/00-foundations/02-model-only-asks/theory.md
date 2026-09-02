@@ -10,7 +10,7 @@
 структуру вида
 
 ```python
-ToolCall(name="send_notification", arguments={"shipment_id": "KZ-4471"})
+ToolCall(name="send_notification", arguments={"shipment_id": "TX-4471"})
 ```
 
 Это просьба. Ничего не отправлено, никуда не записано. Функцию запускает **ваш

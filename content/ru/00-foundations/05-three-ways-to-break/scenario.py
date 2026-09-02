@@ -3,14 +3,14 @@
 from engine.kit import Response, ToolCall
 
 TITLE = "Уровень 05 · Три способа сломаться"
-BRIEF = """Достык не отвечает третьи сутки. Диспетчер спрашивает про него
+BRIEF = """El Paso не отвечает третьи сутки. Диспетчер спрашивает про него
 снова и снова, пока не упрётся в потолок итераций."""
 
 LIMIT = 10  # столько итераций отпущено агенту
 
 TOOLS = [{
     "name": "check_border_status",
-    "description": "Показывает очередь на погранпереходе. Значения: Хоргос, Достык, Актау.",
+    "description": "Показывает очередь на погранпереходе. Значения: Laredo, El Paso, Otay Mesa.",
     "parameters": {"crossing": "string"},
 }]
 
@@ -25,11 +25,11 @@ class Model:
     """Никогда не заканчивает: инструмент отвечает бесполезным, она пробует снова."""
 
     def call(self, messages, tools):
-        return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "Достык"})])
+        return Response(tool_calls=[ToolCall("check_border_status", {"crossing": "El Paso"})])
 
 
 def play(agent):
-    return agent.run("Что с очередью на Достыке?")
+    return agent.run("Что с очередью на El Pasoе?")
 
 
 def explain(exc):

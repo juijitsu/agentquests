@@ -11,7 +11,7 @@ BRIEF = """Клиент спросил про очередь на переход
 CALLED = []  # какие инструменты агент вызвал на самом деле
 
 ARGS = {
-    "check_border_status": {"crossing": "Хоргос"},
+    "check_border_status": {"crossing": "Laredo"},
     "estimate_cost": {"weight_tons": 12},
 }
 
@@ -19,7 +19,7 @@ ARGS = {
 def run_tool(name, arguments):
     CALLED.append(name)
     if name == "check_border_status":
-        return "переход Хоргос: очередь 40 машин, ожидание около 6 часов"
+        return "переход Laredo: очередь 40 машин, ожидание около 6 часов"
     if name == "estimate_cost":
         return "стоимость перевозки: 1080 долларов"
     return f"инструмента '{name}' не существует"
@@ -52,7 +52,7 @@ class Model:
 
 def play(agent):
     CALLED.clear()
-    return agent.run("Сколько ждать на переходе Хоргос?")
+    return agent.run("Сколько ждать на переходе Laredo?")
 
 
 def verify(result):
