@@ -1,0 +1,8 @@
+id: context/06-budget
+track: context
+order: 6
+title: Бюджет контекста
+idea: Когда всё по делу и всё не влезает, режут по отдаче на стоимость, а не по возрасту.
+minutes: 22
+needs_api_key: false
+unlocks: context/07-instructions
