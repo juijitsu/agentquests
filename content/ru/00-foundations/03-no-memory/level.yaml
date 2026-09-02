@@ -1,0 +1,8 @@
+id: foundations/03-no-memory
+track: foundations
+order: 3
+title: Модель не помнит ничего
+idea: Память агента — это массив, который вы пересылаете заново каждый раз.
+minutes: 16
+needs_api_key: false
+unlocks: foundations/04-tool-descriptions
