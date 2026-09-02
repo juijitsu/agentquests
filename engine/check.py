@@ -9,6 +9,8 @@
 import importlib.util
 import sys
 import traceback
+
+sys.dont_write_bytecode = True  # не сорить __pycache__ в папках уроков
 from pathlib import Path
 
 for _s in (sys.stdout, sys.stderr):
@@ -89,6 +91,11 @@ def main() -> int:
             print()
             traceback.print_exc()
             print()
+        return 1
+
+    if not (isinstance(result, tuple) and len(result) == 2):
+        print(f"  {NO} run() вернула {type(result).__name__}, а нужен кортеж (ответ, число итераций)")
+        print("\n  FAIL  Посмотрите контракт run() в шапке файла.\n")
         return 1
 
     verdicts = scenario.verify(result)

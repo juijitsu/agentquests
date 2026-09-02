@@ -32,9 +32,14 @@ def main() -> int:
         expected += [(p / "agent.py", 1) for p in sorted((d / "starter").iterdir())]
 
         for agent, want in expected:
+            label = f"{d.name}/{agent.parent.name}"
+            if not agent.exists():
+                # Иначе пропавший файл даёт exit=1 и засчитывается как «корректно упало».
+                print(f"  ✗ {label:<44} файла нет")
+                failures.append(label)
+                continue
             got = run(agent)
             ok = got == want
-            label = f"{d.name}/{agent.parent.name}"
             print(f"  {'✓' if ok else '✗'} {label:<44} exit={got} ждали={want}")
             if not ok:
                 failures.append(label)
