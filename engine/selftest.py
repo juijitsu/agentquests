@@ -10,6 +10,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CHECK = ROOT / "engine" / "check.py"
 FIELDS = {"id", "track", "order", "title", "idea", "minutes", "needs_api_key", "unlocks"}
+RUNNABLE = {".py", ".ts"}
+
+
+def agent_file(folder: Path) -> Path | None:
+    found = sorted(p for p in folder.glob("agent.*") if p.suffix in RUNNABLE)
+    return found[0] if found else None
 
 for _s in (sys.stdout, sys.stderr):
     try:
@@ -55,21 +61,24 @@ def chain(levels: list[Path]) -> list[str]:
             failures.append(level.parent.name)
 
     if not failures:
-        print(f"  ✓ метаданные: {len(levels)} уровней, цепочка цела")
+        print(f"  ✓ метаданные: цепочка цела, проверено уровней: {len(levels)}")
     return failures
 
 
 def main() -> int:
-    levels = sorted(ROOT.glob("content/*/*/*/scenario.py"))
+    levels = sorted(
+        p for p in ROOT.glob("content/*/*/*/scenario.*") if p.suffix in RUNNABLE
+    )
     failures = chain(levels)
     for level in levels:
         d = level.parent
-        expected = [(d / "solution/agent.py", 0)]
-        expected += [(p / "agent.py", 1) for p in sorted((d / "starter").iterdir())]
+        expected = [(d / "solution", 0)]
+        expected += [(p, 1) for p in sorted((d / "starter").iterdir())]
 
-        for agent, want in expected:
-            label = f"{d.name}/{agent.parent.name}"
-            if not agent.exists():
+        for folder, want in expected:
+            label = f"{d.name}/{folder.name}"
+            agent = agent_file(folder)
+            if agent is None:
                 # Иначе пропавший файл даёт exit=1 и засчитывается как «корректно упало».
                 print(f"  ✗ {label:<44} файла нет")
                 failures.append(label)

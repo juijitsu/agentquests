@@ -10,4 +10,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # Node 24 снимает типы с .ts сам — сборки и пакетов нет.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
       - run: python engine/selftest.py

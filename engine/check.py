@@ -7,6 +7,7 @@
 """
 
 import importlib.util
+import subprocess
 import sys
 import traceback
 
@@ -20,6 +21,19 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 OK, NO = "\u2713", "\u2717"
+
+# \u0423\u0440\u043e\u0432\u0435\u043d\u044c \u043f\u0438\u0448\u0435\u0442\u0441\u044f \u043d\u0430 \u0442\u043e\u043c \u044f\u0437\u044b\u043a\u0435, \u043d\u0430 \u043a\u043e\u0442\u043e\u0440\u043e\u043c \u044d\u0442\u0443 \u0437\u0430\u0434\u0430\u0447\u0443 \u0440\u0435\u0448\u0430\u044e\u0442 \u0432 \u0436\u0438\u0437\u043d\u0438.
+# \u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u0434\u043b\u044f \u0443\u0447\u0435\u043d\u0438\u043a\u0430 \u043e\u0434\u043d\u0430 \u043d\u0430 \u0432\u0441\u0435 \u044f\u0437\u044b\u043a\u0438 \u2014 \u0440\u0430\u043d\u043d\u0435\u0440 \u0441\u0430\u043c \u0437\u043e\u0432\u0451\u0442 \u043d\u0443\u0436\u043d\u044b\u0439.
+RUNNERS = {".ts": ["node", "check.mjs"]}
+
+
+def delegate(agent_path: Path) -> int:
+    command = RUNNERS.get(agent_path.suffix)
+    if command is None:
+        print(f"FAIL  \u0434\u043b\u044f \u0444\u0430\u0439\u043b\u043e\u0432 {agent_path.suffix} \u0440\u0430\u043d\u043d\u0435\u0440\u0430 \u043d\u0435\u0442")
+        return 2
+    runner = Path(__file__).resolve().parent / command[-1]
+    return subprocess.run([*command[:-1], str(runner), str(agent_path)]).returncode
 
 
 def find_level(start: Path) -> Path | None:
@@ -46,13 +60,16 @@ def load(path: Path, name: str):
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("укажите путь к agent.py")
+        print("укажите путь к решению")
         return 2
 
     agent_path = Path(sys.argv[1]).resolve()
     if not agent_path.exists():
         print(f"FAIL  файла нет: {agent_path}")
         return 1
+
+    if agent_path.suffix != ".py":
+        return delegate(agent_path)
 
     level_dir = find_level(agent_path)
     if level_dir is None:
