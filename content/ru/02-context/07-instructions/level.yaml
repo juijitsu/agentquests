@@ -1,0 +1,8 @@
+id: context/07-instructions
+track: context
+order: 7
+title: Данные не инструкции
+idea: Принесённый текст обязан приходить помеченным как данные, иначе он читается как команда.
+minutes: 22
+needs_api_key: false
+unlocks: context/08-boss
