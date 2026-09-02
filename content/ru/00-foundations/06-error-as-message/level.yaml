@@ -1,0 +1,8 @@
+id: foundations/06-error-as-message
+track: foundations
+order: 6
+title: Ошибка как сообщение
+idea: Ошибка — не падение, а вход для следующей итерации цикла.
+minutes: 18
+needs_api_key: false
+unlocks: foundations/07-first-number
