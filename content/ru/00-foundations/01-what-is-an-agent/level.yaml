@@ -1,1 +1,8 @@
-id: foundations/01-what-is-an-agent\ntrack: foundations\norder: 1\ntitle: Что вообще происходит\nidea: Агент — это цикл while, а не магия.\nminutes: 18\nneeds_api_key: false\nunlocks: foundations/02-model-only-asks\n
+id: foundations/01-what-is-an-agent
+track: foundations
+order: 1
+title: Что вообще происходит
+idea: Агент — это цикл while, а не магия.
+minutes: 18
+needs_api_key: false
+unlocks: foundations/02-model-only-asks

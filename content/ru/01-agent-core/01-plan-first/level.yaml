@@ -5,4 +5,4 @@ title: План перед действием
 idea: Сначала маршрут решения, потом шаги — иначе агент видит только ближайший.
 minutes: 18
 needs_api_key: false
-unlocks: agent-core/02-multi-leg
+unlocks: agent-core/02-multi-step
