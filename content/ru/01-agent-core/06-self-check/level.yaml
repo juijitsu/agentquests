@@ -1,0 +1,8 @@
+id: agent-core/06-self-check
+track: agent-core
+order: 6
+title: Самопроверка
+idea: Все шаги успешны — это ещё не значит, что результат верен.
+minutes: 18
+needs_api_key: false
+unlocks: agent-core/07-triggers
