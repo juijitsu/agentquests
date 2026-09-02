@@ -1,0 +1,8 @@
+id: evaluation/06-one-run
+track: evaluation
+order: 6
+title: Одна попытка ничего не значит
+idea: Один прогон говорит, что случилось; несколько — что случается.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/07-goodhart
