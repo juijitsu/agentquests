@@ -1,0 +1,8 @@
+id: retrieval/06-nothing-found
+track: retrieval
+order: 6
+title: Ответа нет в корпусе
+idea: Ранжирование даёт порядок и никогда не говорит, достаточно ли хорош первый.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/07-hybrid
