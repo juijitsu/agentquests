@@ -18,9 +18,11 @@ for _s in (sys.stdout, sys.stderr):
 
 
 def run(agent: Path) -> int:
+    # Вывод не читаем — нужен только код возврата. Без text=True subprocess
+    # не пытается декодировать UTF-8 дочернего процесса локальной кодировкой.
     return subprocess.run(
         [sys.executable, str(CHECK), str(agent)],
-        capture_output=True, text=True,
+        capture_output=True,
     ).returncode
 
 

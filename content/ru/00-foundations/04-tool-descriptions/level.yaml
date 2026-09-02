@@ -1,0 +1,8 @@
+id: foundations/04-tool-descriptions
+track: foundations
+order: 4
+title: Инструмент продаётся описанием
+idea: Модель видит имя, описание и схему — реализацию не видит никогда.
+minutes: 18
+needs_api_key: false
+unlocks: foundations/05-three-ways-to-break
