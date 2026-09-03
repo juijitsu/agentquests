@@ -62,6 +62,52 @@ def load(path: Path, name: str):
     return module
 
 
+def report(scenario, load_agent, where: str) -> tuple[list[str], int]:
+    """Прогоняет уровень и складывает вердикт строками.
+
+    Решение приходит функцией, а не готовым модулем: сломанный файл ученика
+    должен падать здесь же и получать то же сообщение, что и всё остальное.
+
+    Эту функцию зовут двое: командная строка ниже и браузерный запуск на
+    сайте. Второй реализации вердикта в проекте нет и быть не должно.
+    """
+    out = [f"\n  {scenario.TITLE}", f"  {where}\n"]
+    if getattr(scenario, "BRIEF", None):
+        out += ["  " + line for line in scenario.BRIEF.strip().splitlines()]
+        out.append("")
+
+    try:
+        result = scenario.play(load_agent())
+    except NotImplementedError:
+        out += [
+            f"  {NO} run() ещё не реализована",
+            "\n  FAIL  Это заготовка для сложности «профессионал».",
+            "        Соберите решение сами или возьмите starter/advanced.\n",
+        ]
+        return out, 1
+    except Exception as exc:
+        hint = scenario.explain(exc) if hasattr(scenario, "explain") else None
+        out.append(f"  {NO} решение упало: {type(exc).__name__}")
+        if hint:
+            out.append(f"\n  FAIL  {hint}\n")
+        else:
+            out += ["", traceback.format_exc(), ""]
+        return out, 1
+
+    if not (isinstance(result, tuple) and len(result) == 2):
+        out += [
+            f"  {NO} run() вернула {type(result).__name__}, а нужен кортеж (ответ, число итераций)",
+            "\n  FAIL  Посмотрите контракт run() в шапке файла.\n",
+        ]
+        return out, 1
+
+    verdicts = scenario.verify(result)
+    ok = all(passed for passed, _ in verdicts)
+    out += [f"  {OK if passed else NO} {message}" for passed, message in verdicts]
+    out.append("\n  " + ("PASS  следующий уровень открыт\n" if ok else "FAIL\n"))
+    return out, 0 if ok else 1
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print("укажите путь к решению")
@@ -87,48 +133,17 @@ def main() -> int:
 
     scenario = load(level_dir / "scenario.py", "scenario")
 
-    print(f"\n  {scenario.TITLE}")
-    print(f"  {agent_path.name} \u00b7 {agent_path.parent.name}\n")
-
-    if getattr(scenario, "BRIEF", None):
-        for line in scenario.BRIEF.strip().splitlines():
-            print("  " + line)
-        print()
-
-    try:
+    def load_agent():
         if agent_path.suffix == ".sql":
-            agent = agent_path.read_text(encoding="utf-8")
-        else:
-            agent = load(agent_path, "agent")
-        result = scenario.play(agent)
-    except NotImplementedError:
-        print(f"  {NO} run() ещё не реализована")
-        print("\n  FAIL  Это заготовка для сложности «профессионал».")
-        print("        Соберите решение сами или возьмите starter/advanced.\n")
-        return 1
-    except Exception as exc:
-        hint = scenario.explain(exc) if hasattr(scenario, "explain") else None
-        print(f"  {NO} решение упало: {type(exc).__name__}")
-        if hint:
-            print(f"\n  FAIL  {hint}\n")
-        else:
-            print()
-            traceback.print_exc()
-            print()
-        return 1
+            return agent_path.read_text(encoding="utf-8")
+        return load(agent_path, "agent")
 
-    if not (isinstance(result, tuple) and len(result) == 2):
-        print(f"  {NO} run() вернула {type(result).__name__}, а нужен кортеж (ответ, число итераций)")
-        print("\n  FAIL  Посмотрите контракт run() в шапке файла.\n")
-        return 1
-
-    verdicts = scenario.verify(result)
-    ok = all(passed for passed, _ in verdicts)
-    for passed, message in verdicts:
-        print(f"  {OK if passed else NO} {message}")
-
-    print("\n  " + ("PASS  следующий уровень открыт\n" if ok else "FAIL\n"))
-    return 0 if ok else 1
+    lines, code = report(
+        scenario, load_agent, f"{agent_path.name} · {agent_path.parent.name}"
+    )
+    for line in lines:
+        print(line)
+    return code
 
 
 if __name__ == "__main__":

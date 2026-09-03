@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   basePath: process.env.NODE_ENV === "production" ? repo : "",
   trailingSlash: true,
   images: { unoptimized: true },
+  // Воркеру нужен абсолютный путь, а basePath на клиенте иначе не виден.
+  env: { NEXT_PUBLIC_BASE_PATH: process.env.NODE_ENV === "production" ? repo : "" },
 };
 
 export default nextConfig;

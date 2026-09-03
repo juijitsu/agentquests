@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Shell, { themeScript, type Entry } from "./Shell";
+import { allLevels } from "@/lib/content";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,69 +9,51 @@ export const metadata: Metadata = {
     "Восемь треков, каждый уровень проверяется тестами. Теория, метод, задание — и проверка, которую не пройти чтением.",
 };
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const entries: Entry[] = allLevels().map((l) => ({
+    title: l.title,
+    track: l.track,
+    idea: l.idea,
+    order: l.order,
+    href: `${base}/${l.trackSlug}/${l.slug}/`,
+  }));
+
   return (
     <html lang="ru">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <header
+        <Shell entries={entries} />
+        <main>{children}</main>
+        <footer
           style={{
-            borderBottom: "1px solid var(--line)",
-            background: "var(--panel)",
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
+            borderTop: "2px solid var(--line)",
+            marginTop: "4rem",
+            padding: "1.5rem clamp(1rem, 4vw, 2rem)",
+            fontSize: "0.84rem",
+            color: "var(--ink-3)",
           }}
         >
           <div
             style={{
               maxWidth: "72rem",
               margin: "0 auto",
-              padding: "0.7rem clamp(1rem, 4vw, 2rem)",
               display: "flex",
-              alignItems: "baseline",
-              gap: "1rem",
+              gap: "0.6rem 1.4rem",
               flexWrap: "wrap",
             }}
           >
-            <Link href="/" style={{ fontWeight: 600, letterSpacing: "-0.01em" }}>
-              AgentQuests
-            </Link>
-            <span
-              style={{
-                fontFamily: "var(--mono)",
-                fontSize: "0.72rem",
-                color: "var(--ink-3)",
-              }}
-            >
-              инженерия агентов на задачах
-            </span>
+            <span>Уровни и движок — MIT.</span>
+            <span>Ни ключа, ни пакетов, ни сети.</span>
             <a
               href="https://github.com/juijitsu/agentquests"
-              style={{
-                marginLeft: "auto",
-                fontSize: "0.82rem",
-                color: "var(--ink-2)",
-              }}
+              style={{ marginLeft: "auto", fontWeight: 600, color: "var(--ink-2)" }}
             >
               GitHub ↗
             </a>
-          </div>
-        </header>
-
-        <main>{children}</main>
-
-        <footer
-          style={{
-            borderTop: "1px solid var(--line)",
-            marginTop: "4rem",
-            padding: "1.5rem clamp(1rem, 4vw, 2rem)",
-            fontSize: "0.8rem",
-            color: "var(--ink-3)",
-          }}
-        >
-          <div style={{ maxWidth: "72rem", margin: "0 auto" }}>
-            Уровни и движок — MIT. Ни API-ключа, ни пакетов, ни сети: проверки
-            работают на записанном поведении модели.
           </div>
         </footer>
       </body>

@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 /** Уровни лежат рядом с сайтом и остаются единственным источником правды. */
 const ROOT = join(process.cwd(), "..", "content", "ru");
+const ENGINE = join(process.cwd(), "..", "engine");
 
 const TIERS = ["novice", "advanced", "pro"] as const;
 const LANGS: Record<string, string> = { ".py": "Python", ".ts": "TypeScript", ".sql": "SQL" };
@@ -25,9 +26,21 @@ export type Level = {
   method: string;
   task: string;
   scenario: string;
+  /** Блок «Если застряли» из задания — им подсвечивается провал. */
+  hint: string;
   solution: Solution | null;
   starters: Partial<Record<Tier, Solution>>;
+  /** Уровень исполним в браузере: сценарий на Python, решение на Python или SQL. */
+  runnable: boolean;
 };
+
+/** Исходники движка едут в браузер как есть — второй реализации вердикта нет. */
+export function engineSources(): { kit: string; check: string } {
+  return {
+    kit: read(join(ENGINE, "kit.py")),
+    check: read(join(ENGINE, "check.py")),
+  };
+}
 
 export type Track = {
   slug: string;
@@ -65,6 +78,15 @@ function codeIn(dir: string): Solution | null {
   if (!file) return null;
   const ext = file.slice(file.lastIndexOf("."));
   return { file, lang: LANGS[ext] ?? ext.slice(1), code: read(join(dir, file)) };
+}
+
+/** «Если застряли» уже написан в каждом задании — незачем сочинять второй. */
+function hintFrom(task: string): string {
+  const at = task.indexOf("## Если застряли");
+  if (at < 0) return "";
+  const rest = task.slice(at + "## Если застряли".length);
+  const end = rest.indexOf("\n## ");
+  return (end < 0 ? rest : rest.slice(0, end)).trim();
 }
 
 function scenarioIn(dir: string): { name: string; code: string } {
@@ -110,8 +132,12 @@ export function tracks(): Track[] {
             method: read(join(dir, "method.md")),
             task: read(join(dir, "task.md")),
             scenario: scenarioIn(dir).code,
+            hint: hintFrom(read(join(dir, "task.md"))),
             solution,
             starters,
+            runnable:
+              scenarioIn(dir).name.endsWith(".py") &&
+              (solution?.file.endsWith(".py") || solution?.file.endsWith(".sql")) === true,
           };
         })
         .filter((l): l is Level => l !== null);

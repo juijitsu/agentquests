@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { marked } from "marked";
-import { allLevels, findLevel, type Solution } from "@/lib/content";
+import { allLevels, engineSources, findLevel, type Solution } from "@/lib/content";
+import Runner from "../../Runner";
 
 export function generateStaticParams() {
   return allLevels().map((l) => ({ track: l.trackSlug, level: l.slug }));
@@ -134,8 +135,33 @@ export default async function LevelPage({
       <div className="prose" style={{ marginTop: "3rem" }} dangerouslySetInnerHTML={html(level.method)} />
       <div className="prose" style={{ marginTop: "3rem" }} dangerouslySetInnerHTML={html(level.task)} />
 
+      {level.runnable ? (
+        <Runner
+          levelId={`${level.trackSlug}/${level.slug}`}
+          engine={engineSources()}
+          scenario={level.scenario}
+          starters={level.starters}
+          solution={level.solution}
+          hintHtml={level.hint ? (marked.parse(level.hint, { async: false }) as string) : ""}
+        />
+      ) : (
+        <p
+          style={{
+            marginTop: "3rem",
+            padding: "0.8rem 1rem",
+            border: "1px solid var(--line)",
+            borderRadius: 6,
+            color: "var(--ink-2)",
+            fontSize: "0.9rem",
+          }}
+        >
+          Этот уровень на {level.lang} — в браузере он не запускается, для него
+          остаются чтение и командная строка.
+        </p>
+      )}
+
       <section style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <h2 style={{ fontSize: "1.12rem", margin: 0, letterSpacing: "-0.01em" }}>Код уровня</h2>
+        <h2 style={{ fontSize: "1.28rem", margin: 0, letterSpacing: "-0.015em" }}>Код уровня</h2>
         <p style={{ margin: 0, color: "var(--ink-2)", fontSize: "0.9rem", maxWidth: "38rem" }}>
           Заготовки отличаются только количеством подсказок. Эталон стоит
           открывать после своей попытки — иначе уровень превращается в чтение.
