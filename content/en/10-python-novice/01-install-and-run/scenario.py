@@ -45,6 +45,20 @@ def explain(exc):
     return None
 
 
+def _diff(expected, got):
+    """Two similar strings side by side do not read.
+
+    A beginner looks at "Hello, Maria!" and "Hello!, Maria!" and sees no
+    difference: it is one character. So the strings go one under the other,
+    with an arrow under the first place they part.
+    """
+    limit = min(len(expected), len(got))
+    at = next((i for i in range(limit) if expected[i] != got[i]), limit)
+    return ("\n        expected: " + expected +
+            "\n        got:      " + got +
+            "\n        " + " " * (10 + at) + "^")
+
+
 def verify(result):
     got, total = result
 
@@ -57,7 +71,7 @@ def verify(result):
         first = f"on the name \"{wrong_type[0]}\" the result was not text"
     elif wrong:
         name, expected, g = wrong[0]
-        first = f"on the name \"{name}\" expected \"{expected}\", got \"{g}\""
+        first = f"on the name \"{name}\"" + _diff(expected, g)
     else:
         first = "all matched"
 

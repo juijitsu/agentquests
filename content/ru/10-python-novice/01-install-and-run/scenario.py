@@ -44,6 +44,20 @@ def explain(exc):
     return None
 
 
+def _diff(expected, got):
+    """Две похожие строки рядом не читаются.
+
+    Новичок смотрит на «Привет, Мария!» и «Привет!, Мария!» и не видит
+    разницы: она в одном символе. Поэтому строки выводятся друг под другом,
+    а под первым несовпавшим местом ставится стрелка.
+    """
+    limit = min(len(expected), len(got))
+    at = next((i for i in range(limit) if expected[i] != got[i]), limit)
+    return ("\n        ждали:    " + expected +
+            "\n        получили: " + got +
+            "\n        " + " " * (10 + at) + "^")
+
+
 def verify(result):
     got, total = result
 
@@ -56,7 +70,7 @@ def verify(result):
         first = f"на имени «{wrong_type[0]}» вернулось не текстовое значение"
     elif wrong:
         name, expected, g = wrong[0]
-        first = f"на имени «{name}» ждали «{expected}», получили «{g}»"
+        first = f"на имени «{name}»" + _diff(expected, g)
     else:
         first = "все совпали"
 

@@ -471,7 +471,7 @@
  },
  "en/python-novice/01-install-and-run": {
   "novice": {
-   "output": "  Python from scratch · Level 01 · Install and first run\n  agent.py · novice\n\n  The function solve takes a name and must return a greeting.\n  The task shows two names; the check runs five.\n\n  ✓ returned text: yes\n  ✗ names matched: 0 of 5\n  ✗ first difference: on the name \"Maria\" expected \"Hello, Maria!\", got \"Hello!\"\n\n  FAIL",
+   "output": "  Python from scratch · Level 01 · Install and first run\n  agent.py · novice\n\n  The function solve takes a name and must return a greeting.\n  The task shows two names; the check runs five.\n\n  ✓ returned text: yes\n  ✗ names matched: 0 of 5\n  ✗ first difference: on the name \"Maria\"\n        expected: Hello, Maria!\n        got:      Hello!\n                       ^\n\n  FAIL",
    "code": 1
   },
   "solution": {
@@ -951,7 +951,7 @@
  },
  "ru/python-novice/01-install-and-run": {
   "novice": {
-   "output": "  Курс «Python: старт» · Уровень 01 · Установка и первый запуск\n  agent.py · novice\n\n  Функция solve получает имя и должна вернуть приветствие.\n  В задании показаны два имени, проверка прогонит пять.\n\n  ✓ вернулся текст: да\n  ✗ совпало имён: 0 из 5\n  ✗ первое расхождение: на имени «Мария» ждали «Привет, Мария!», получили «Привет!»\n\n  FAIL",
+   "output": "  Курс «Python: старт» · Уровень 01 · Установка и первый запуск\n  agent.py · novice\n\n  Функция solve получает имя и должна вернуть приветствие.\n  В задании показаны два имени, проверка прогонит пять.\n\n  ✓ вернулся текст: да\n  ✗ совпало имён: 0 из 5\n  ✗ первое расхождение: на имени «Мария»\n        ждали:    Привет, Мария!\n        получили: Привет!\n                        ^\n\n  FAIL",
    "code": 1
   },
   "solution": {

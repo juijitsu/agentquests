@@ -14,17 +14,21 @@ spaces, not a tab.
 
 ```
 returned text: yes
-names matched: 3 of 5
-first difference: on the name "Anna-Maria" expected ..., got ...
+names matched: 0 of 5
+first difference: on the name "Maria"
+    expected: Hello, Maria!
+    got:      Hello!, Maria!
+                   ^
 ```
 
 The first line is about the type: if it says no, the function returned
 something that is not text — most often because it has `print` where `return`
 should be, and then nothing comes back at all.
 
-The second says how many names lined up. The third shows the first mismatch in
-full: what went in, what was expected, what came out. That is enough to find
-the mistake without guessing.
+The second says how many names lined up. The third shows the first mismatch:
+the two strings one under the other, with an arrow under the first place
+they part. Two similar strings side by side cannot be compared by eye, so
+the place is named outright.
 
 **Step 5. If the program crashed.** There is no verdict then; instead you get
 the name of the error and an explanation in plain words. The most common ones
