@@ -1,0 +1,8 @@
+id: python-novice/01-install-and-run
+track: python-novice
+order: 1
+title: Установка и первый запуск
+idea: Программа получает вход и возвращает выход; всё остальное в курсе строится на этом.
+minutes: 20
+needs_api_key: false
+unlocks: python-novice/02-variables

@@ -1,5 +1,6 @@
 import { tracks, allLevels, outline } from "@/lib/content";
 import { at, dictFor, type Lang } from "@/lib/i18n";
+import { COURSES, COURSES_TOTAL, isCourse } from "@/lib/sections";
 import Tracks, { type Group } from "../Tracks";
 import LevelStar from "../LevelStar";
 
@@ -15,24 +16,44 @@ const PLANNED: Record<string, number> = {
 const TOTAL_PLANNED = 76;
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-export default function Home({ lang }: { lang: Lang }) {
+/** Полка раздела. Разделов два, и различаются они только тем, какие треки
+    считают своими и какими словами о себе говорят; всё остальное совпадает,
+    поэтому страница одна. */
+export default function Home({
+  lang,
+  section = "agents",
+}: {
+  lang: Lang;
+  section?: "agents" | "courses";
+}) {
   const dict = dictFor(lang);
-  const done = allLevels(lang).length;
-  const langs = [...new Set(allLevels(lang).map((l) => l.lang))].filter((l) => l !== "—");
+  const courses = section === "courses";
+  const mine = (slug: string) => (courses ? isCourse(slug) : !isCourse(slug));
 
-  const groups: Group[] = tracks(lang).map((t) => ({
-    slug: t.slug,
-    title: t.title,
-    planned: PLANNED[t.slug] ?? t.levels.length,
-    levels: t.levels.map((l) => ({
-      id: `${l.trackSlug}/${l.slug}`,
-      href: at(lang, base, `/${l.trackSlug}/${l.slug}/`),
-      order: l.order,
-      title: l.title,
-      idea: l.idea,
-      lang: l.lang,
-    })),
-  }));
+  const planned = courses ? COURSES : PLANNED;
+  const total = courses ? COURSES_TOTAL : TOTAL_PLANNED;
+
+  // Счётчик раздела считает уровни раздела: «76 уровней про агентов» должно
+  // оставаться правдой после того, как рядом появились курсы.
+  const levels = allLevels(lang).filter((l) => mine(l.trackSlug));
+  const done = levels.length;
+  const langs = [...new Set(levels.map((l) => l.lang))].filter((l) => l !== "—");
+
+  const groups: Group[] = tracks(lang)
+    .filter((t) => mine(t.slug))
+    .map((t) => ({
+      slug: t.slug,
+      title: t.title,
+      planned: planned[t.slug] ?? t.levels.length,
+      levels: t.levels.map((l) => ({
+        id: `${l.trackSlug}/${l.slug}`,
+        href: at(lang, base, `/${l.trackSlug}/${l.slug}/`),
+        order: l.order,
+        title: l.title,
+        idea: l.idea,
+        lang: l.lang,
+      })),
+    }));
 
   return (
     <div
@@ -53,7 +74,7 @@ export default function Home({ lang }: { lang: Lang }) {
             textWrap: "balance",
           }}
         >
-          {dict.heroTitle}
+          {courses ? dict.coursesTitle : dict.heroTitle}
         </h1>
         <p
           style={{
@@ -63,11 +84,11 @@ export default function Home({ lang }: { lang: Lang }) {
             margin: "0 0 1.3rem",
           }}
         >
-          {dict.heroLead}
+          {courses ? dict.coursesLead : dict.heroLead}
         </p>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-          <span className="chip">{dict.chipDone(done, TOTAL_PLANNED)}</span>
+          <span className="chip">{dict.chipDone(done, total)}</span>
           {langs.map((l) => (
             <span key={l} className="chip">
               {l}
@@ -84,15 +105,35 @@ export default function Home({ lang }: { lang: Lang }) {
             color: "var(--ink-2)",
           }}
         >
-          {dict.homeNote} <span className="chip">Ctrl K</span>
+          {courses ? dict.coursesNote : dict.homeNote}
+          {courses ? null : (
+            <>
+              {" "}
+              <span className="chip">Ctrl K</span>
+            </>
+          )}
+        </p>
+
+        {/* Разделы стоят рядом, а не один внутри другого: с каждого видно
+            другой, и ни один не заявляет уровни соседа своими. */}
+        <p style={{ margin: "1.1rem 0 0", fontSize: "0.92rem" }}>
+          <a
+            href={at(lang, base, courses ? "/" : "/courses/")}
+            style={{ fontWeight: 600 }}
+          >
+            {courses ? dict.toAgents : dict.toCourses} →
+          </a>
         </p>
       </section>
 
       <Tracks groups={groups} outline={outline()} lang={lang} />
 
-      {/* Подсказки главной — про устройство курса. Всё сказанное здесь
-          проверяемо на самой странице: замки, разбор, запуск в браузере. */}
-      <LevelStar hints={dict.homeHints(done, TOTAL_PLANNED)} lang={lang} />
+      {/* Подсказки полки — про её устройство. Всё сказанное проверяемо на
+          самой странице: замки, разбор, запуск в браузере. */}
+      <LevelStar
+        hints={courses ? dict.coursesHints(done, total) : dict.homeHints(done, total)}
+        lang={lang}
+      />
     </div>
   );
 }

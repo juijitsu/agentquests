@@ -27,7 +27,7 @@ OK, NO = "\u2713", "\u2717"
 # \u0440\u0443\u0441\u0441\u043a\u043e\u0435: \u0442\u0430\u043a \u0443 \u0441\u0442\u0430\u0440\u044b\u0445 \u0443\u0440\u043e\u0432\u043d\u0435\u0439 \u043d\u0438\u0447\u0435\u0433\u043e \u043d\u0435 \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f.
 SAYS = {
     "ru": {
-        "not_impl": "run() \u0435\u0449\u0451 \u043d\u0435 \u0440\u0435\u0430\u043b\u0438\u0437\u043e\u0432\u0430\u043d\u0430",
+        "not_impl": "{entry}() \u0435\u0449\u0451 \u043d\u0435 \u0440\u0435\u0430\u043b\u0438\u0437\u043e\u0432\u0430\u043d\u0430",
         "not_impl_why": "\u042d\u0442\u043e \u0437\u0430\u0433\u043e\u0442\u043e\u0432\u043a\u0430 \u0434\u043b\u044f \u0441\u043b\u043e\u0436\u043d\u043e\u0441\u0442\u0438 \u00ab\u043f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u00bb.",
         "not_impl_how": "\u0421\u043e\u0431\u0435\u0440\u0438\u0442\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0441\u0430\u043c\u0438 \u0438\u043b\u0438 \u0432\u043e\u0437\u044c\u043c\u0438\u0442\u0435 starter/advanced.",
         "crashed": "\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u0443\u043f\u0430\u043b\u043e: {}",
@@ -37,7 +37,7 @@ SAYS = {
         "fail": "FAIL",
     },
     "en": {
-        "not_impl": "run() is not implemented yet",
+        "not_impl": "{entry}() is not implemented yet",
         "not_impl_why": "This is the starter for the pro tier.",
         "not_impl_how": "Build the solution yourself or take starter/advanced.",
         "crashed": "the solution crashed: {}",
@@ -106,8 +106,11 @@ def report(scenario, load_agent, where: str) -> tuple[list[str], int]:
     try:
         result = scenario.play(load_agent())
     except NotImplementedError:
+        # Точка входа зависит от курса: у агентных уровней это run(), у
+        # языковых solve(). Сценарий говорит своё имя, старые молчат.
+        entry = getattr(scenario, "ENTRY", "run")
         out += [
-            f"  {NO} {says['not_impl']}",
+            f"  {NO} {says['not_impl'].format(entry=entry)}",
             f"\n  {says['fail']}  {says['not_impl_why']}",
             f"        {says['not_impl_how']}\n",
         ]

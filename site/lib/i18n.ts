@@ -38,6 +38,13 @@ const ru = {
     "Уровень даёт теорию, затем метод, затем задание. Следующий открывается, когда проходят тесты, — а не когда вы дочитали.",
   chipDone: (done: number, total: number) => `готово уровней: ${done} из ${total}`,
   chipBrowser: "запуск прямо в браузере",
+  toCourses: "Ещё здесь есть курсы по языкам",
+  toAgents: "К курсу по инженерии ИИ-агентов",
+  coursesTitle: "Языки программирования, с нуля и дальше",
+  coursesLead:
+    "Три ступени на язык: старт, средний, старший. Каждая задача про свою тему, и каждая проверяется тем же способом, что и остальной сайт — прогоном, а не галочкой.",
+  coursesNote:
+    "Ставить ничего не нужно: питон работает прямо на странице. Установка на свою машину разобрана в первом уровне.",
   homeNote:
     "Слева — теория и задание, справа — разбор с настоящими прогонами. Решают на отдельной странице, в терминале прямо в браузере. Первый уровень открыт в каждом треке: начинать можно с любого. Дальше внутри трека по порядку — там уровень честно опирается на предыдущий. Поиск —",
 
@@ -48,6 +55,12 @@ const ru = {
     retrieval: "Поиск",
     evaluation: "Оценка",
     "red-team": "Красная команда",
+    "python-novice": "Python: старт",
+    "python-middle": "Python: средний",
+    "python-senior": "Python: старший",
+    "ts-novice": "TypeScript: старт",
+    "ts-middle": "TypeScript: средний",
+    "ts-senior": "TypeScript: старший",
   } as Record<string, string>,
   passed: (n: number) => `пройдено ${n}`,
   firstOpen: "первый уровень открыт — начинать можно отсюда",
@@ -153,6 +166,25 @@ const ru = {
   hSolveConsole: (command: string) =>
     `Этот уровень в браузере не идёт. Запуск в своей консоли, из корня репозитория: ${command}`,
 
+  coursesHints: (done: number, total: number) => [
+    {
+      title: "с чего начать",
+      body: "Если языка не знаете совсем — «Python: старт», первый уровень. Там же разобрана установка на Windows, macOS и Linux. Знаете основы — берите средний.",
+    },
+    {
+      title: "ставить ли что-то",
+      body: "Нет. Питон загружается прямо в браузер и работает на странице решения. Установка нужна только чтобы запускать у себя, и она не обязательна.",
+    },
+    {
+      title: "как проверяется",
+      body: "Вы пишете функцию, проверка прогоняет её на наборе случаев и показывает первое расхождение целиком: что подали, что ждали, что получили.",
+    },
+    {
+      title: "сколько готово",
+      body: `Написано уровней: ${done} из ${total}. Курсы выходят по одному, каждый целиком, а не по кусочкам.`,
+    },
+  ],
+
   homeHints: (done: number, total: number) => [
     {
       title: "с чего начать",
@@ -203,6 +235,13 @@ const en: Dict = {
     "A level gives you theory, then method, then a task. The next one opens when the tests pass — not when you reach the end of the page.",
   chipDone: (done: number, total: number) => `levels ready: ${done} of ${total}`,
   chipBrowser: "runs in your browser",
+  toCourses: "There are language courses here too",
+  toAgents: "Back to the AI agent engineering course",
+  coursesTitle: "Programming languages, from nothing and onwards",
+  coursesLead:
+    "Three steps per language: from scratch, middle, senior. Every task is on its own topic, and every one is checked the way the rest of the site checks things — by running it, not by ticking a box.",
+  coursesNote:
+    "Nothing to install: Python runs on the page itself. Installing it on your own machine is covered by the first level.",
   homeNote:
     "Theory and task on the left, a walkthrough with real runs on the right. You solve on a separate page, in a terminal inside the browser. The first level of every track is open: start wherever you like. After that the order inside a track holds — each level genuinely builds on the one before. Search —",
 
@@ -213,6 +252,12 @@ const en: Dict = {
     retrieval: "Retrieval",
     evaluation: "Evaluation",
     "red-team": "Red Team",
+    "python-novice": "Python from scratch",
+    "python-middle": "Python, middle",
+    "python-senior": "Python, senior",
+    "ts-novice": "TypeScript from scratch",
+    "ts-middle": "TypeScript, middle",
+    "ts-senior": "TypeScript, senior",
   },
   passed: (n: number) => `${n} done`,
   firstOpen: "first level is open — you can start here",
@@ -312,6 +357,25 @@ const en: Dict = {
     "The “Solve this level” button opens a page with a terminal right in the browser. The starter is already loaded there — that is what you edit.",
   hSolveConsole: (command: string) =>
     `This level does not run in the browser. Run it in your own console, from the repository root: ${command}`,
+
+  coursesHints: (done: number, total: number) => [
+    {
+      title: "where to start",
+      body: "If you do not know the language at all, take the first level of Python from scratch. It also covers installing on Windows, macOS and Linux. If you know the basics, take the middle course.",
+    },
+    {
+      title: "is there anything to install",
+      body: "No. Python loads straight into the browser and runs on the solve page. Installing it locally is only for running things on your own machine, and it is optional.",
+    },
+    {
+      title: "how it is checked",
+      body: "You write a function, the check runs it over a set of cases and shows the first difference in full: what went in, what was expected, what came out.",
+    },
+    {
+      title: "how much is ready",
+      body: `Levels written: ${done} of ${total}. Courses ship one at a time, each one whole rather than in pieces.`,
+    },
+  ],
 
   homeHints: (done: number, total: number) => [
     {

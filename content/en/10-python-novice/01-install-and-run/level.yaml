@@ -1,0 +1,8 @@
+id: python-novice/01-install-and-run
+track: python-novice
+order: 1
+title: Install and first run
+idea: A program takes an input and returns an output; everything else in the course is built on that.
+minutes: 20
+needs_api_key: false
+unlocks: python-novice/02-variables
