@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Solution, Tier } from "@/lib/content";
 import { saveDone } from "./progress";
+import Editor from "./Editor";
 import Terminal, { TermWindow } from "./Terminal";
 import Star, { type Hint } from "./Star";
 import { dictFor, type Dict, type Lang } from "@/lib/i18n";
@@ -192,18 +193,13 @@ export default function Runner({
       </div>
 
       <TermWindow title={dict.editorTitle(starters[tier]?.file ?? "agent.py")}>
-        <textarea
-          className="term-edit"
+        <Editor
           value={code}
-          onChange={(e) => setCode(e.target.value)}
-          onKeyDown={(e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-              e.preventDefault();
-              if (!busy) run();
-            }
+          file={starters[tier]?.file ?? "agent.py"}
+          onChange={setCode}
+          onRun={() => {
+            if (!busy) run();
           }}
-          spellCheck={false}
-          rows={Math.min(22, Math.max(12, code.split("\n").length + 1))}
         />
       </TermWindow>
 

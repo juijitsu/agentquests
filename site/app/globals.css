@@ -29,6 +29,18 @@
   --bubble: #f6f8f7;
   --sans: "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: "Cascadia Mono", "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Подсветка кода. Окно терминала тёмное в обеих темах сайта, поэтому
+     набор один и в тёмной секции не переопределяется. */
+  --code-kw: #f2a3bd;
+  --code-str: #a9d98c;
+  --code-num: #e8c07a;
+  --code-com: #6f7c78;
+  --code-fn: #8ec7ee;
+  --code-def: #7ee0c0;
+  --code-op: #9daaa6;
+  --code-type: #c8b0f0;
+  --code-builtin: #e8b98a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -219,20 +231,12 @@ summary:focus-visible {
 }
 
 /* Редактор — то же окно, только тело набирается руками. */
+/* Контейнер редактора. Отступы, шрифт и цвета задаёт сам CodeMirror через
+   свою тему — там они видны рядом с остальными его настройками. */
 .term-edit {
   display: block;
   width: 100%;
-  margin: 0;
-  border: 0;
-  padding: 0.85rem 1rem;
-  background: transparent;
-  color: var(--term-ink);
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.62;
-  resize: vertical;
-  outline-offset: -2px;
+  min-height: 12rem;
 }
 
 .caret::after {
