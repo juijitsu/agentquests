@@ -69,6 +69,12 @@ const ru = {
   notTranslatedTitle: "",
   notTranslatedBody: "",
 
+  // Страница 404 не принадлежит ни одному языку: на неё попадают по
+  // опечатке в любом адресе. Поэтому она печатает обе строки сразу.
+  notFoundTitle: "Такой страницы нет",
+  notFoundBody: "Адрес набран с опечаткой или уровень ещё не написан.",
+  notFoundHome: "К списку треков",
+
   otherLangTitle: (lang: string) => `Уровень на ${lang}`,
   otherLangBody:
     "В браузере он не запускается: там живёт только Python. Значит запуск один — в своей консоли, из корня репозитория.",
@@ -225,6 +231,10 @@ const en: Dict = {
   notTranslatedTitle: "Lesson is in Russian",
   notTranslatedBody:
     "The interface is English, but this lesson has not been translated yet — the text below and the checker output are Russian.",
+
+  notFoundTitle: "No such page",
+  notFoundBody: "The address has a typo, or the level is not written yet.",
+  notFoundHome: "Back to the tracks",
 
   otherLangTitle: (lang: string) => `A ${lang} level`,
   otherLangBody:

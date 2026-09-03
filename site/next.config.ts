@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   // Воркеру нужен абсолютный путь, а basePath на клиенте иначе не виден.
   env: { NEXT_PUBLIC_BASE_PATH: process.env.NODE_ENV === "production" ? repo : "" },
+  // Корневых макетов два, и общего для них 404 из layout + not-found
+  // не собрать. Этот флаг включает app/global-not-found.tsx.
+  experimental: { globalNotFound: true },
 };
 
 export default nextConfig;
