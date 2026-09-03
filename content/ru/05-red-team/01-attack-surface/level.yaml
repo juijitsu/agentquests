@@ -1,0 +1,8 @@
+id: red-team/01-attack-surface
+track: red-team
+order: 1
+title: Где можно надавить
+idea: Поверхность атаки — это входы, которыми управляют снаружи, а не те, которые вы первыми вспомнили.
+minutes: 20
+needs_api_key: false
+unlocks: red-team/02-data-as-order

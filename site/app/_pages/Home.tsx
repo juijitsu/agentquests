@@ -9,6 +9,7 @@ const PLANNED: Record<string, number> = {
   context: 8,
   retrieval: 9,
   evaluation: 8,
+  "red-team": 8,
 };
 
 const TOTAL_PLANNED = 76;

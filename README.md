@@ -2,7 +2,7 @@
 
 **Learn AI engineering by shipping.** Eight career tracks, every level verified by tests — you can't skip by reading.
 
-> **Status: early.** Five tracks are complete — Foundations (8 levels), Agent core (10), Context (8), Retrieval (9) and Evaluation (8): 43 playable end to end. The other 33 are specified but not written yet.
+> **Status: early.** Five tracks are complete — Foundations (8 levels), Agent core (10), Context (8), Retrieval (9) and Evaluation (8). Red team is under way (1 of 8). 44 levels playable end to end, and all 43 finished ones are available in English too.
 
 ```bash
 python engine/check.py content/ru/00-foundations/01-what-is-an-agent/starter/novice/agent.py

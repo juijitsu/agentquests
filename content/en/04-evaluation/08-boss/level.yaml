@@ -5,4 +5,4 @@ title: Boss: the whole evaluation
 idea: Every leniency in a measurement inflates the result, and they all inflate it the same way.
 minutes: 45
 needs_api_key: false
-unlocks: red-team/01
+unlocks: red-team/01-attack-surface

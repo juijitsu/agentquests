@@ -5,4 +5,4 @@ title: Босс: оценка целиком
 idea: Каждая поблажка в измерении завышает результат, и все они завышают его в одну сторону.
 minutes: 45
 needs_api_key: false
-unlocks: red-team/01
+unlocks: red-team/01-attack-surface
