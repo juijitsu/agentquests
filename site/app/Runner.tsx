@@ -7,6 +7,7 @@ import Editor from "./Editor";
 import Terminal, { TermWindow } from "./Terminal";
 import Star, { type Hint } from "./Star";
 import { dictFor, type Dict, type Lang } from "@/lib/i18n";
+import { explainSyntax, type Problem } from "@/lib/hints";
 
 type Props = {
   levelId: string;
@@ -98,6 +99,9 @@ export default function Runner({
   const [verdict, setVerdict] = useState<number | null>(null);
   const [hintOpen, setHintOpen] = useState(false);
   const worker = useRef<Worker | null>(null);
+  const seq = useRef(0);
+  const [problem, setProblem] = useState<Problem | null>(null);
+  const [touched, setTouched] = useState(false);
 
   useEffect(() => () => worker.current?.terminate(), []);
 
@@ -106,6 +110,7 @@ export default function Runner({
     setCode(source ?? starters[next]?.code ?? "");
     setOutput("");
     setVerdict(null);
+    setProblem(null);
     setHintOpen(false);
     setState("idle");
   }
@@ -119,18 +124,18 @@ export default function Runner({
     setOutput(dict.interrupted);
   }
 
-  const run = useCallback(() => {
-    // Каждый прогон — свой воркер: так его можно снять, если решение зациклится.
-    worker.current?.terminate();
+  /* Воркер один на страницу и живёт между прогонами: в нём же разбирается
+     код для живых подсказок. Второй Pyodide рядом — это ещё двенадцать
+     мегабайт и вторая копия интерпретатора в памяти.
+
+     Долгая жизнь интерпретатора здесь предусмотрена: загрузчик воркера
+     кладёт каждый прогон в свежий каталог и чистит имена модулей, иначе
+     второй запуск получил бы код первого. Снимаем воркер только по кнопке
+     «Прервать», по сбою и при уходе со страницы. */
+  const ensureWorker = useCallback(() => {
+    if (worker.current) return worker.current;
     const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
     const w = new Worker(`${base}/runner.js`, { type: "module" });
-    worker.current = w;
-
-    setState("busy");
-    setOutput("");
-    setVerdict(null);
-    setHintOpen(false);
-    setStage(dict.preparing);
 
     // Без этого сбой воркера не виден вовсе: он не всплывает в консоль страницы.
     w.onerror = (event) => {
@@ -143,19 +148,51 @@ export default function Runner({
     };
 
     w.onmessage = (event) => {
-      const data = event.data as { type: string; text: string; code?: number };
-      if (data.type === "stage") {
-        setStage(data.text);
+      const data = event.data as {
+        type: string;
+        text?: string;
+        code?: number;
+        seq?: number;
+        name?: string;
+        message?: string;
+        line?: number;
+        column?: number;
+      };
+
+      if (data.type === "check") {
+        // Ответ на устаревший запрос: код с тех пор успели поправить.
+        if (data.seq !== seq.current) return;
+        const said = explainSyntax(data.name ?? "", data.message ?? "", dict);
+        setProblem(
+          said ? { line: data.line ?? 1, column: data.column ?? 1, message: said } : null,
+        );
         return;
       }
+
+      if (data.type === "stage") {
+        setStage(data.text ?? "");
+        return;
+      }
+
       setStage("");
       setState("done");
-      setOutput(data.text);
+      setOutput(data.text ?? "");
       setVerdict(data.code ?? 1);
       if (data.code === 0) saveDone(levelId);
-      w.terminate();
-      worker.current = null;
     };
+
+    worker.current = w;
+    return w;
+  }, [dict, levelId]);
+
+  const run = useCallback(() => {
+    const w = ensureWorker();
+
+    setState("busy");
+    setOutput("");
+    setVerdict(null);
+    setHintOpen(false);
+    setStage(dict.preparing);
 
     const name = starters[tier]?.file ?? "agent.py";
     w.postMessage({
@@ -166,7 +203,22 @@ export default function Runner({
       agentName: name,
       where: `${name} · ${tier}`,
     });
-  }, [code, dict, engine, levelId, scenario, starters, tier]);
+  }, [code, dict, engine, ensureWorker, scenario, starters, tier]);
+
+  /* Разбор по паузе в наборе. Пока не тронули код — не разбираем и воркер
+     не поднимаем: тот, кто просто читает страницу, не должен платить
+     двенадцатью мегабайтами. Во время прогона молчим, чтобы не мешать. */
+  useEffect(() => {
+    if (!touched || state === "busy") return;
+    // Разобрать без запуска умеет только питон. У прочих языков подсказки
+    // нет, и ставить её нечем: reset уже чистит её при смене сложности.
+    if (!(starters[tier]?.file ?? "agent.py").endsWith(".py")) return;
+    const timer = setTimeout(() => {
+      seq.current += 1;
+      ensureWorker().postMessage({ kind: "check", seq: seq.current, source: code });
+    }, 450);
+    return () => clearTimeout(timer);
+  }, [code, touched, state, tier, starters, ensureWorker]);
 
   const busy = state === "busy";
   const passed = verdict === 0;
@@ -196,12 +248,36 @@ export default function Runner({
         <Editor
           value={code}
           file={starters[tier]?.file ?? "agent.py"}
-          onChange={setCode}
+          problem={problem}
+          onChange={(next) => {
+            setCode(next);
+            setTouched(true);
+          }}
           onRun={() => {
             if (!busy) run();
           }}
         />
       </TermWindow>
+
+      {/* Метка на поле редактора крохотная, а текст к ней показывается только
+          по наведению — новичок его не найдёт. Поэтому подсказка стоит ещё и
+          строкой под окном, где её видно без действий. */}
+      {problem ? (
+        <p
+          style={{
+            margin: "-0.5rem 0 0",
+            fontSize: "0.86rem",
+            color: "var(--no)",
+            display: "flex",
+            gap: "0.5rem",
+            alignItems: "baseline",
+            flexWrap: "wrap",
+          }}
+        >
+          <span className="chip">{dict.liveAt(problem.line)}</span>
+          <span>{problem.message}</span>
+        </p>
+      ) : null}
 
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
         <button className="btn btn-go" onClick={run} disabled={busy}>

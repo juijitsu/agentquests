@@ -24,9 +24,11 @@ import {
   syntaxHighlighting,
 } from "@codemirror/language";
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
+import { lintGutter, setDiagnostics, type Diagnostic } from "@codemirror/lint";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { tags } from "@lezer/highlight";
+import type { Problem } from "@/lib/hints";
 
 /* Раньше здесь было голое поле ввода. Половина ошибок новичка приходилась не
    на задачу, а на механику: не поставил четыре пробела, не закрыл кавычку.
@@ -98,11 +100,13 @@ function langFor(file: string) {
 export default function Editor({
   value,
   file,
+  problem,
   onChange,
   onRun,
 }: {
   value: string;
   file: string;
+  problem: Problem | null;
   onChange: (next: string) => void;
   onRun: () => void;
 }) {
@@ -133,6 +137,7 @@ export default function Editor({
         indentUnit.of("    "),
         bracketMatching(),
         closeBrackets(),
+        lintGutter(),
         syntaxHighlighting(highlight),
         language.current.of(langFor(file)),
         look,
@@ -180,6 +185,24 @@ export default function Editor({
     if (!v) return;
     v.dispatch({ effects: language.current.reconfigure(langFor(file)) });
   }, [file]);
+
+  // Разбор кода идёт в воркере, поэтому ошибка приезжает сюда готовой:
+  // номер строки, колонка и уже человеческая фраза.
+  useEffect(() => {
+    const v = view.current;
+    if (!v) return;
+    const found: Diagnostic[] = [];
+    if (problem) {
+      const doc = v.state.doc;
+      const line = doc.line(Math.min(Math.max(problem.line, 1), doc.lines));
+      // Подсветить надо кусок ненулевой длины, иначе на экране не видно
+      // ничего. На пустой строке остаётся только метка на поле.
+      let from = Math.min(line.from + Math.max(problem.column - 1, 0), line.to);
+      if (from >= line.to && line.to > line.from) from = line.to - 1;
+      found.push({ from, to: line.to, severity: "error", message: problem.message });
+    }
+    v.dispatch(setDiagnostics(v.state, found));
+  }, [problem]);
 
   return <div className="term-edit" ref={host} />;
 }

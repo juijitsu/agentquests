@@ -61,17 +61,57 @@ def run_level(run_id, kit_src, check_src, scenario_src, agent_src, agent_name, w
     finally:
         if work in sys.path:
             sys.path.remove(work)
+
+
+def check_syntax(src):
+    """Разбирает исходник, не исполняя его.
+
+    Настоящий компилятор питона, а не догадка по тексту: ложных срабатываний
+    в подсказке новичку быть не должно. Дальше синтаксиса он не видит —
+    NameError и прочее случаются только при запуске.
+    """
+    try:
+        compile(src, "agent.py", "exec")
+    except SyntaxError as exc:
+        return (type(exc).__name__, exc.msg or "", exc.lineno or 1, exc.offset or 1)
+    except Exception as exc:
+        return (type(exc).__name__, str(exc), 1, 1)
+    return ("", "", 0, 0)
 `;
 
+async function ready(announce) {
+  if (python !== null) return python;
+  // Про загрузку сообщаем только когда её ждёт человек. Проверка синтаксиса
+  // грузит рантайм молча: её никто не просил.
+  if (announce) self.postMessage({ type: "stage", text: "Загружаю Python… первый раз это 12 МБ" });
+  python = await loadPyodide({ indexURL: PYODIDE });
+  python.runPython(BOOTSTRAP);
+  return python;
+}
+
 self.onmessage = async (event) => {
+  if (event.data.kind === "check") {
+    const { seq, source } = event.data;
+    try {
+      await ready(false);
+      const call = python.globals.get("check_syntax");
+      const result = call(source);
+      const [name, message, line, column] = result.toJs();
+      result.destroy();
+      call.destroy();
+      self.postMessage({ type: "check", seq, name, message, line, column });
+    } catch {
+      // Не сложилось — молчим: подсказка необязательна, ломать из-за неё
+      // страницу нельзя.
+      self.postMessage({ type: "check", seq, name: "", message: "", line: 0, column: 0 });
+    }
+    return;
+  }
+
   const { kit, check, scenario, agent, agentName, where } = event.data;
 
   try {
-    if (python === null) {
-      self.postMessage({ type: "stage", text: "Загружаю Python… первый раз это 12 МБ" });
-      python = await loadPyodide({ indexURL: PYODIDE });
-      python.runPython(BOOTSTRAP);
-    }
+    await ready(true);
 
     self.postMessage({ type: "stage", text: "Прогоняю уровень…" });
 

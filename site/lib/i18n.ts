@@ -166,6 +166,26 @@ const ru = {
   hSolveConsole: (command: string) =>
     `Этот уровень в браузере не идёт. Запуск в своей консоли, из корня репозитория: ${command}`,
 
+  /* Живые подсказки: питон разбирает код, пока его набирают, и говорит
+     по-английски своими словами. Здесь они переведены на человеческий. */
+  liveAt: (line: number) => `строка ${line}`,
+  live: {
+    unclosed: "Скобка открыта и не закрыта. Найдите пару к последней открытой.",
+    unterminatedString: "Кавычка открыта и не закрыта: строка не кончилась.",
+    unterminatedTriple: "Тройная кавычка открыта и не закрыта.",
+    colon: "Пропущено двоеточие в конце строки-заголовка.",
+    needIndent: "Нет отступа: тело должно быть сдвинуто на четыре пробела вправо.",
+    extraIndent: "Лишний отступ: эта строка сдвинута, а сдвигаться не должна.",
+    mixedIndent: "Отступ не совпадает ни с одним внешним: строка сдвинута не на столько.",
+    tabs: "Смешаны табы и пробелы. Оставьте что-то одно, лучше пробелы.",
+    returnOutside: "return стоит снаружи функции: он должен быть внутри, с отступом.",
+    assignTo: "Слева от знака равенства должно стоять имя, а не выражение.",
+    invalidChar: "В коде посторонний символ: чаще всего это кавычка из текстового редактора.",
+    leadingZero: "У числа не может быть ведущих нулей.",
+    missingComma: "Похоже, пропущена запятая между значениями.",
+    generic: "Питон не может разобрать эту строку.",
+  },
+
   coursesHints: (done: number, total: number) => [
     {
       title: "с чего начать",
@@ -357,6 +377,26 @@ const en: Dict = {
     "The “Solve this level” button opens a page with a terminal right in the browser. The starter is already loaded there — that is what you edit.",
   hSolveConsole: (command: string) =>
     `This level does not run in the browser. Run it in your own console, from the repository root: ${command}`,
+
+  /* Live hints: Python parses the code as it is typed and complains in its
+     own English. Here that is turned into plain language. */
+  liveAt: (line: number) => `line ${line}`,
+  live: {
+    unclosed: "A bracket is open and never closed. Find the pair for the last one opened.",
+    unterminatedString: "A quote is open and never closed: the string does not end.",
+    unterminatedTriple: "A triple quote is open and never closed.",
+    colon: "A colon is missing at the end of the header line.",
+    needIndent: "No indent: the body has to be shifted four spaces to the right.",
+    extraIndent: "Extra indent: this line is shifted and should not be.",
+    mixedIndent: "The indent matches no outer level: the line is shifted by the wrong amount.",
+    tabs: "Tabs and spaces are mixed. Keep one of them, spaces preferably.",
+    returnOutside: "return sits outside a function: it has to be inside, indented.",
+    assignTo: "The left of an equals sign has to be a name, not an expression.",
+    invalidChar: "There is a stray character in the code: usually a quote from a word processor.",
+    leadingZero: "A number cannot have leading zeros.",
+    missingComma: "A comma looks to be missing between values.",
+    generic: "Python cannot parse this line.",
+  },
 
   coursesHints: (done: number, total: number) => [
     {
