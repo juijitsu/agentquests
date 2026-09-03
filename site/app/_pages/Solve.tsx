@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { render } from "@/lib/md";
 import { allLevels, directory, engineSources, findLevel, outline } from "@/lib/content";
 import { at, dictFor, type Lang } from "@/lib/i18n";
 import Gate from "../Gate";
@@ -102,7 +102,7 @@ export default function Solve({
           scenario={level.scenario}
           starters={level.starters}
           solution={level.solution}
-          hintHtml={level.hint ? (marked.parse(level.hint, { async: false }) as string) : ""}
+          hintHtml={level.hint ? render(level.hint) : ""}
           nextHref={next ? here(`/${next.trackSlug}/${next.slug}/`) : null}
           nextTitle={next ? next.title : null}
           lang={lang}

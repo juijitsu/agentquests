@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { render } from "@/lib/md";
 import { allLevels, directory, findLevel, outline } from "@/lib/content";
 import { at, dictFor, type Lang } from "@/lib/i18n";
 import Gate from "../Gate";
@@ -9,7 +9,7 @@ import LevelStar from "../LevelStar";
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function html(md: string) {
-  return { __html: marked.parse(md, { async: false }) as string };
+  return { __html: render(md) };
 }
 
 export default function Level({
@@ -197,7 +197,7 @@ export default function Level({
               ? [
                   {
                     title: dict.hLevelTitle,
-                    body: marked.parse(level.hint, { async: false }) as string,
+                    body: render(level.hint),
                     html: true,
                   },
                 ]
