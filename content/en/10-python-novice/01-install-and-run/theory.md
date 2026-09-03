@@ -54,9 +54,6 @@ def solve(name: str) -> str:
 **Why.** It tells Python: what follows is not just code but a named piece of
 code that can be called later.
 
-**How to type it.** Three letters `d`, `e`, `f`, then **one space**, then the
-name.
-
 **What breaks.** Writing `Def` or `DEF` will not work. The language
 distinguishes capitals from small letters.
 
@@ -138,10 +135,9 @@ def solve(name: str) -> str:
 four spaces, and they are not decoration
 ```
 
-**How to type it.** Press space four times. Tab works too, but mixing tabs and
-spaces in one file is not allowed — Python complains about exactly that.
-
 **What breaks.** No indent, and Python thinks the function body is empty.
+Tab indents too, but mixing tabs and spaces in one file is not allowed and
+Python complains about that separately.
 
 **What you will see:** `IndentationError: expected an indented block`.
 

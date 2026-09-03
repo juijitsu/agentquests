@@ -1,4 +1,4 @@
-# Method · How to type it, step by step
+# Method · How to solve it, step by step
 
 No explanations here, only actions. The theory is above if something is
 unclear — go back to it.
@@ -63,18 +63,13 @@ into
     return "Hello, " + name + "!"
 ```
 
-Type it in pieces:
+The answer is built from three pieces, joined with a plus:
 
-1. Delete everything after `return`, keeping `return` itself and the space.
-2. Type a quote `"` — the editor closes it for you.
-3. Inside the quotes type `Hello`, then a comma, then a **space**. You should
-   have `"Hello, "` — the space sits before the closing quote, it is part of
-   the text.
-4. Put the cursor **past** the closing quote.
-5. Type space, `+`, space.
-6. Type `name` — **without quotes**. It is a label, not text.
-7. Type space, `+`, space.
-8. Type a quote, then `!` inside it, and move past the closing quote.
+- `"Hello, "` — text, so it goes in quotes. The space after the comma sits
+  **inside** the quotes: it is part of the text, not spacing between code.
+- `name` — **without quotes**. It is a label, not text. In quotes it would
+  turn into four letters.
+- `"!"` — text again.
 
 The whole line:
 
