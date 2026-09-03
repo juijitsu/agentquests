@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <Shell entries={entries} />
+        <Shell entries={entries} home={`${base}/`} />
         <main>{children}</main>
         <footer
           style={{

@@ -15,7 +15,7 @@ const THEME_KEY = "aq-theme";
 /** Ставит тему до первой отрисовки: иначе на долю секунды мигает чужая. */
 export const themeScript = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");if(t)document.documentElement.dataset.theme=t}catch(e){}})()`;
 
-export default function Shell({ entries }: { entries: Entry[] }) {
+export default function Shell({ entries, home }: { entries: Entry[]; home: string }) {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -98,7 +98,7 @@ export default function Shell({ entries }: { entries: Entry[] }) {
             gap: "0.8rem",
           }}
         >
-          <a href="/" style={{ fontWeight: 800, fontSize: "1.02rem", letterSpacing: "-0.02em" }}>
+          <a href={home} style={{ fontWeight: 800, fontSize: "1.02rem", letterSpacing: "-0.02em" }}>
             AgentQuests
           </a>
 
