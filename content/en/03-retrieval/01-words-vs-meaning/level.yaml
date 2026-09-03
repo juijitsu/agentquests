@@ -1,0 +1,8 @@
+id: retrieval/01-words-vs-meaning
+track: retrieval
+order: 1
+title: Words against meaning
+idea: Matching words and matching meaning are different things, and the first is confidently wrong.
+minutes: 20
+needs_api_key: false
+unlocks: retrieval/02-similar-not-useful

@@ -1,0 +1,8 @@
+id: retrieval/02-similar-not-useful
+track: retrieval
+order: 2
+title: Similar is not useful
+idea: Similarity answers "is this about it", not "is the answer in there".
+minutes: 20
+needs_api_key: false
+unlocks: retrieval/03-chunks

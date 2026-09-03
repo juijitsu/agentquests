@@ -1,0 +1,8 @@
+id: retrieval/08-freshness
+track: retrieval
+order: 8
+title: Freshness against similarity
+idea: Freshness does not choose instead of similarity — it discounts it.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/09-boss

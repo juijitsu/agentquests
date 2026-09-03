@@ -1,0 +1,8 @@
+id: retrieval/09-boss
+track: retrieval
+order: 9
+title: Boss: the whole search engine
+idea: One half of the question has an answer hidden behind four obstacles, the other has none at all.
+minutes: 45
+needs_api_key: false
+unlocks: evaluation/01-one-example

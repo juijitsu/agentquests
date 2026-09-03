@@ -1,0 +1,8 @@
+id: retrieval/07-hybrid
+track: retrieval
+order: 7
+title: Hybrid: a number and a meaning
+idea: An identifier carries identity, not meaning, and semantic search cannot tell them apart.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/08-freshness

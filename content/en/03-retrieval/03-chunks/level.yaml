@@ -1,0 +1,8 @@
+id: retrieval/03-chunks
+track: retrieval
+order: 3
+title: Chunk boundaries
+idea: A chunk boundary is a decision about what can be found at all.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/04-duplicates

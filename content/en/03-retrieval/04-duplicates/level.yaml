@@ -1,0 +1,8 @@
+id: retrieval/04-duplicates
+track: retrieval
+order: 4
+title: Five copies of one thing
+idea: A slot in the selection is earned by what it adds, not by how similar it is.
+minutes: 20
+needs_api_key: false
+unlocks: retrieval/05-multi-query

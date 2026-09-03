@@ -1,0 +1,8 @@
+id: retrieval/06-nothing-found
+track: retrieval
+order: 6
+title: The answer is not in the corpus
+idea: Ranking gives you an order and never says whether the first one is good enough.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/07-hybrid

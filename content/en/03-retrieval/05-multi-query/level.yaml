@@ -1,0 +1,8 @@
+id: retrieval/05-multi-query
+track: retrieval
+order: 5
+title: A compound question
+idea: One vector for two questions lands between them and answers neither.
+minutes: 22
+needs_api_key: false
+unlocks: retrieval/06-nothing-found
