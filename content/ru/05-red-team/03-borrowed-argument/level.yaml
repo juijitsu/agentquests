@@ -1,0 +1,8 @@
+id: red-team/03-borrowed-argument
+track: red-team
+order: 3
+title: Чужой аргумент
+idea: Аргумент опасен по источнику значения, а не по тому, кто его вписал: часть таких аргументов модель вообще не видит.
+minutes: 25
+needs_api_key: false
+unlocks: red-team/04-leak-in-the-answer

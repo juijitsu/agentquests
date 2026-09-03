@@ -1,0 +1,8 @@
+id: red-team/03-borrowed-argument
+track: red-team
+order: 3
+title: Someone else's argument
+idea: An argument is dangerous because of where its value came from, not who wrote it: some of them the model never sees.
+minutes: 25
+needs_api_key: false
+unlocks: red-team/04-leak-in-the-answer
