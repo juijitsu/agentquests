@@ -168,6 +168,33 @@ const ru = {
 
   /* Живые подсказки: питон разбирает код, пока его набирают, и говорит
      по-английски своими словами. Здесь они переведены на человеческий. */
+  /* Звезда отвечает на то, что случилось, а не даёт один и тот же совет.
+     Каждое правило доказуемо: имя исключения из трассы, состояние вердикта,
+     сравнение кода с заготовкой. */
+  star: {
+    crashTitle: "программа упала",
+    syntaxTitle: "код не разбирается",
+    noteTitle: "что видно в вашем коде",
+    untouched: "Код совпадает с заготовкой: вы ещё ничего не поменяли. Заготовка рабочая и делает не то — с неё и начинают.",
+    renamed: (name: string) => `В файле нет функции ${name}. Проверка ищет её по имени и другую не найдёт: верните название как было.`,
+    printNoReturn: "В коде есть print и нет ни одного return. Печать показывает значение на экране, а проверка смотрит на возвращённое. Замените print на return.",
+    todoLeft: "Строка с TODO ещё на месте. В ней написано, что именно надо набрать вместо неё.",
+    runtime: {
+      NameError: "Питон не нашёл имени. Так бывает, когда текст написан без кавычек, когда в имени опечатка или когда переменную ещё не создали.",
+      TypeError: "Значения разных видов оказались в одном действии. Чаще всего складывают текст и число: число надо сперва превратить в текст через str(), либо текст в число через int().",
+      AttributeError: "У значения нет такого свойства или метода. Проверьте, у чего вы его вызываете: у списка одни методы, у строки другие.",
+      IndexError: "Обращение за границу списка: элемента с таким номером нет. Нумерация начинается с нуля, последний элемент имеет номер len(x) - 1.",
+      KeyError: "В словаре нет такого ключа. Проверьте написание или возьмите значение через .get(ключ, запасное).",
+      ValueError: "Значение не того вида. Классический случай — int() от текста, в котором не только цифры.",
+      ZeroDivisionError: "Деление на ноль. Проверьте, чем делите: там оказался ноль.",
+      UnboundLocalError: "Переменную читают раньше, чем ей что-то присвоили.",
+      RecursionError: "Функция вызывает сама себя без конца. Нужен случай, в котором она возвращает ответ и больше не вызывает себя.",
+      ModuleNotFoundError: "Такого модуля нет. В этом уровне он и не нужен: всё решается тем, что уже разобрано.",
+      ImportError: "Не получилось взять имя из модуля. Проверьте, что именно вы импортируете.",
+      generic: "Программа запустилась и упала. Название ошибки выше — по нему видно, что именно не сошлось.",
+    },
+  },
+
   liveAt: (line: number) => `строка ${line}`,
   live: {
     unclosed: "Скобка открыта и не закрыта. Найдите пару к последней открытой.",
@@ -380,6 +407,33 @@ const en: Dict = {
 
   /* Live hints: Python parses the code as it is typed and complains in its
      own English. Here that is turned into plain language. */
+  /* The star answers what actually happened instead of repeating one piece
+     of advice. Every rule is provable: the exception name from the trace,
+     the state of the verdict, the code compared against the starter. */
+  star: {
+    crashTitle: "the program crashed",
+    syntaxTitle: "the code does not parse",
+    noteTitle: "what your code shows",
+    untouched: "The code is identical to the starter: nothing has been changed yet. The starter works and does the wrong thing — that is where you begin.",
+    renamed: (name: string) => `There is no function called ${name} in the file. The check looks for it by name and will not find another: put the name back.`,
+    printNoReturn: "The code has a print and not a single return. Printing shows a value on the screen, and the check looks at what is returned. Replace print with return.",
+    todoLeft: "The TODO line is still there. It says exactly what to type in its place.",
+    runtime: {
+      NameError: "Python could not find a name. That happens when text is written without quotes, when a name has a typo, or when a variable has not been created yet.",
+      TypeError: "Values of different kinds ended up in one operation. Most often text and a number are added: the number has to become text with str() first, or the text a number with int().",
+      AttributeError: "The value has no such property or method. Check what you are calling it on: a list has some methods, a string has others.",
+      IndexError: "Reaching past the end of a list: there is no item with that number. Numbering starts at zero, and the last item is len(x) - 1.",
+      KeyError: "The dictionary has no such key. Check the spelling, or take the value with .get(key, fallback).",
+      ValueError: "The value is of the wrong shape. The classic case is int() on text that is not only digits.",
+      ZeroDivisionError: "Division by zero. Check what you are dividing by: it turned out to be zero.",
+      UnboundLocalError: "A variable is read before anything has been assigned to it.",
+      RecursionError: "The function calls itself without end. It needs a case in which it returns an answer and stops calling itself.",
+      ModuleNotFoundError: "There is no such module. This level does not need one: everything is solved with what has already been covered.",
+      ImportError: "A name could not be taken from the module. Check what exactly you are importing.",
+      generic: "The program started and crashed. The name of the error above says what did not line up.",
+    },
+  },
+
   liveAt: (line: number) => `line ${line}`,
   live: {
     unclosed: "A bracket is open and never closed. Find the pair for the last one opened.",

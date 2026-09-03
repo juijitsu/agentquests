@@ -5,9 +5,9 @@ import type { Solution, Tier } from "@/lib/content";
 import { saveDone } from "./progress";
 import Editor from "./Editor";
 import Terminal, { TermWindow } from "./Terminal";
-import Star, { type Hint } from "./Star";
-import { dictFor, type Dict, type Lang } from "@/lib/i18n";
-import { explainSyntax, type Problem } from "@/lib/hints";
+import Star from "./Star";
+import { dictFor, type Lang } from "@/lib/i18n";
+import { explainSyntax, starHints, type Problem } from "@/lib/hints";
 
 type Props = {
   levelId: string;
@@ -23,58 +23,6 @@ type Props = {
 };
 
 type State = "idle" | "busy" | "done";
-
-/** Что звезда знает про положение дел. Всё берётся из настоящего вывода
-    проверки: строки с ✗ — это условия, которые не сошлись, а строка FAIL
-    несёт объяснение самого движка. Ничего не сочиняется. */
-function hintsFrom(
-  output: string,
-  verdict: number | null,
-  tier: Tier,
-  hasNovice: boolean,
-  levelHint: string,
-  dict: Dict,
-): Hint[] {
-  const lines = output.split("\n").map((l) => l.trim());
-  const failed = lines.filter((l) => l.startsWith("✗")).map((l) => l.slice(1).trim());
-
-  // Объяснение движка занимает несколько строк: заголовок FAIL и перенос
-  // фразы под ним. Взять одну строку — значит оборвать её на полуслове.
-  const at = lines.findIndex((l) => l.startsWith("FAIL"));
-  let said = "";
-  if (at >= 0) {
-    const block = [lines[at].replace(/^FAIL\s*/, "")];
-    for (let i = at + 1; i < lines.length && lines[i]; i++) block.push(lines[i]);
-    said = block.join(" ").trim();
-  }
-
-  const hints: Hint[] = [];
-
-  if (verdict === null) {
-    hints.push({ title: dict.hStartTitle, body: dict.hStartBody });
-  } else if (verdict === 0) {
-    hints.push({ title: dict.hDoneTitle, body: dict.hDoneBody });
-  } else if (failed.length > 0) {
-    hints.push({
-      title: failed.length === 1 ? dict.hOneFailed : dict.hManyFailed,
-      body: failed.join("\n"),
-    });
-  } else {
-    hints.push({ title: dict.hNoChecksTitle, body: dict.hNoChecksBody });
-  }
-
-  if (said) hints.push({ title: dict.hEngineTitle, body: said });
-  if (levelHint) hints.push({ title: dict.hLevelTitle, body: levelHint, html: true });
-
-  if (verdict !== 0) {
-    hints.push({
-      title: dict.hWhereTitle,
-      body: (tier !== "novice" && hasNovice ? dict.hWhereNovice : "") + dict.hWhereBody,
-    });
-  }
-
-  return hints;
-}
 
 export default function Runner({
   levelId,
@@ -351,7 +299,17 @@ export default function Runner({
       {/* Подсказки живут в одном месте — у звезды. Кнопка выше только
           открывает её облачко, второй панели с подсказкой на странице нет. */}
       <Star
-        hints={hintsFrom(output, verdict, tier, !!starters.novice, hintHtml, dict)}
+        hints={starHints({
+          output,
+          verdict,
+          code,
+          starter: starters[tier]?.code ?? "",
+          tier,
+          hasNovice: !!starters.novice,
+          levelHint: hintHtml,
+          problem,
+          dict,
+        })}
         mood={busy ? "think" : passed ? "cheer" : verdict === null ? "idle" : "sad"}
         open={hintOpen}
         onOpenChange={setHintOpen}
