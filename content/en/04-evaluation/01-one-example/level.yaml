@@ -1,0 +1,8 @@
+id: evaluation/01-one-example
+track: evaluation
+order: 1
+title: One example is not a measurement
+idea: Testing a fix on the case it was made for measures the intent, not the result.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/02-exact-match

@@ -1,0 +1,8 @@
+id: evaluation/07-goodhart
+track: evaluation
+order: 7
+title: The metric gets optimised, the goal does not
+idea: A proxy you swapped the goal for gets optimised apart from it — and usually at its expense.
+minutes: 22
+needs_api_key: false
+unlocks: evaluation/08-boss

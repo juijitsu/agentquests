@@ -1,0 +1,8 @@
+id: evaluation/03-average
+track: evaluation
+order: 3
+title: The average hides the failure
+idea: An overall percentage averages the incomparable, and it rises with every easy case you add.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/04-judge

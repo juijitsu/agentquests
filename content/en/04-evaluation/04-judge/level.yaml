@@ -1,0 +1,8 @@
+id: evaluation/04-judge
+track: evaluation
+order: 4
+title: The judge plays along
+idea: An author knows what they meant to say, so they score their own evasion as precision.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/05-leak

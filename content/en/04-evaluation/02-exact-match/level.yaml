@@ -1,0 +1,8 @@
+id: evaluation/02-exact-match
+track: evaluation
+order: 2
+title: String equality is not correctness
+idea: A metric that counts a rephrasing as an error makes you roll back improvements.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/03-average

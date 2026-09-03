@@ -1,0 +1,8 @@
+id: evaluation/06-one-run
+track: evaluation
+order: 6
+title: One attempt means nothing
+idea: One run tells you what happened; several tell you what happens.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/07-goodhart

@@ -329,6 +329,86 @@
    "code": 0
   }
  },
+ "en/evaluation/01-one-example": {
+  "novice": {
+   "output": "  Evaluation track · Level 01 · One example is not a measurement\n  agent.py · novice\n\n  The fix was tested on the case it was made for.\n  That one mended. Two others broke, and nobody asked about them.\n\n  ✗ cases run on each version: 1 of 6\n  ✗ verdict: Old 0 of 1, new 1 of 1 — it got better.\n  ✗ score named: no\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 01 · One example is not a measurement\n  agent.py · solution\n\n  The fix was tested on the case it was made for.\n  That one mended. Two others broke, and nobody asked about them.\n\n  ✓ cases run on each version: 6 of 6\n  ✓ verdict: Old 5 of 6, new 4 of 6 — it got worse.\n  ✓ score named: yes\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/02-exact-match": {
+  "novice": {
+   "output": "  Evaluation track · Level 02 · String equality is not correctness\n  agent.py · novice\n\n  The new version answers all six cases correctly.\n  Three answers are phrased differently, and the metric demands a rollback.\n\n  ✗ semantic checks: 0 (12 needed)\n  ✗ verdict: Old 5 of 6, new 3 of 6 — it got worse.\n  ✗ new version's score: not named\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 02 · String equality is not correctness\n  agent.py · solution\n\n  The new version answers all six cases correctly.\n  Three answers are phrased differently, and the metric demands a rollback.\n\n  ✓ semantic checks: 12 (12 needed)\n  ✓ verdict: Old 5 of 6, new 6 of 6 — it got better.\n  ✓ new version's score: 6 of 6\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/03-average": {
+  "novice": {
+   "output": "  Evaluation track · Level 03 · The average hides the failure\n  agent.py · novice\n\n  The set totals 90 percent, and it is being shipped.\n  All four failures are in overweight: half the answers there are wrong.\n\n  ✗ kinds computed: none (['overweight', 'rates', 'schedule'] needed)\n  ✗ weak spot named: False\n  ✗ overweight share: not named\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 03 · The average hides the failure\n  agent.py · solution\n\n  The set totals 90 percent, and it is being shipped.\n  All four failures are in overweight: half the answers there are wrong.\n\n  ✓ kinds computed: ['overweight', 'rates', 'schedule'] (['overweight', 'rates', 'schedule'] needed)\n  ✓ weak spot named: True\n  ✓ overweight share: 50%\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/04-judge": {
+  "novice": {
+   "output": "  Evaluation track · Level 04 · The judge plays along\n  agent.py · novice\n\n  The agent checks itself and awards six of six.\n  Two answers are evasive: \"around three dollars\" and \"sometime in the evening\".\n\n  ✗ who judged: the author\n  ✗ score: Judged by the author: 6 of 6.\n  ✓ cases judged: 6 of 6\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 04 · The judge plays along\n  agent.py · solution\n\n  The agent checks itself and awards six of six.\n  Two answers are evasive: \"around three dollars\" and \"sometime in the evening\".\n\n  ✓ who judged: independent\n  ✓ score: Judged by independent: 4 of 6.\n  ✓ cases judged: 6 of 6\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/05-leak": {
+  "novice": {
+   "output": "  Evaluation track · Level 05 · The test leaked into the prompt\n  agent.py · novice\n\n  Five of eight is a decent result. Four of those five cases\n  sit word for word in the agent's prompt as examples.\n\n  ✗ cases checked for a leak: 0 of 8\n  ✗ honest score: not named\n  ✗ report: On the set 5 of 8.\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 05 · The test leaked into the prompt\n  agent.py · solution\n\n  Five of eight is a decent result. Four of those five cases\n  sit word for word in the agent's prompt as examples.\n\n  ✓ cases checked for a leak: 8 of 8\n  ✓ honest score: named\n  ✓ report: On the whole set 5 of 8, on unseen cases 1 of 4.\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/06-one-run": {
+  "novice": {
+   "output": "  Evaluation track · Level 06 · One attempt means nothing\n  agent.py · novice\n\n  Two cases answer correctly one time and wrongly the next.\n  On one run they came out lucky, and the agent called the system working.\n\n  ✗ runs per case: 1 of 5\n  ✗ unstable cases named: no\n  ✗ report: Stably correct 5 of 6.\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 06 · One attempt means nothing\n  agent.py · solution\n\n  Two cases answer correctly one time and wrongly the next.\n  On one run they came out lucky, and the agent called the system working.\n\n  ✓ runs per case: 5 of 5\n  ✓ unstable cases named: c5, c6\n  ✓ report: Stably correct 3 of 6. Unstable 2: c5, c6.\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/07-goodhart": {
+  "novice": {
+   "output": "  Evaluation track · Level 07 · The metric gets optimised, the goal does not\n  agent.py · novice\n\n  The previous level fought evasiveness, and it was measured by the share\n  of specific answers. The new version is always specific — three inventions included.\n\n  ✗ the goal was measured: no\n  ✗ confident errors: do not match\n  ✓ report: Specificity: old 50%, new 100%. Confident errors: old 0, new 0. The metric grew, the goal did not.\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 07 · The metric gets optimised, the goal does not\n  agent.py · solution\n\n  The previous level fought evasiveness, and it was measured by the share\n  of specific answers. The new version is always specific — three inventions included.\n\n  ✓ the goal was measured: yes\n  ✓ confident errors: match\n  ✓ report: Specificity: old 50%, new 100%. Confident errors: old 0, new 3. The metric grew, the goal did not.\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/evaluation/08-boss": {
+  "novice": {
+   "output": "  Evaluation track · Level 08 · Boss: the whole evaluation\n  agent.py · novice\n\n  The new version is ready for release. One run with self-grading gives\n  nine of nine. The truth is zero percent on overweight.\n\n  ✗ who judged: the author\n  ✗ checked for a leak: 0 of 9\n  ✗ runs per case: 1 of 3\n  ✗ weak kind: overweight 0% — no\n  ✗ decision: By kind: everything 100%. Decision — it can ship.\n  ✓ calls to the model: 1 (2 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Evaluation track · Level 08 · Boss: the whole evaluation\n  agent.py · solution\n\n  The new version is ready for release. One run with self-grading gives\n  nine of nine. The truth is zero percent on overweight.\n\n  ✓ who judged: independent\n  ✓ checked for a leak: 9 of 9\n  ✓ runs per case: 3 of 3\n  ✓ weak kind: overweight 0% — named\n  ✓ decision: By kind: overweight 0%, rates 100%, schedule 67%. Unstable 2: s3, w3. Decision — it cannot ship.\n  ✓ calls to the model: 1 (2 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
  "ru/foundations/01-what-is-an-agent": {
   "novice": {
    "output": "  [1] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [2] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [3] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [4] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [5] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [6] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [7] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [8] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [9] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [10] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n\n  Уровень 01 · Что вообще происходит\n  agent.py · novice\n\n  Первый день в транспортной компании. Вам отдали диспетчера,\n  которого начал писать уволившийся разработчик. Он не отвечает.\n\n  ✗ решение упало: RecursionError\n\n  FAIL  Модель просит инструмент снова и снова — значит она не видит\n        его результата. Посмотрите, что происходит с ответом\n        инструмента после вызова.",

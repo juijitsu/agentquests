@@ -1,0 +1,8 @@
+id: evaluation/05-leak
+track: evaluation
+order: 5
+title: The test leaked into the prompt
+idea: A case that sits in the prompt measures the agent's memory, not its work.
+minutes: 20
+needs_api_key: false
+unlocks: evaluation/06-one-run
