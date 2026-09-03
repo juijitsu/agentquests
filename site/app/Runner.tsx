@@ -5,18 +5,7 @@ import type { Solution, Tier } from "@/lib/content";
 import { saveDone } from "./progress";
 import Terminal, { TermWindow } from "./Terminal";
 import Star, { type Hint } from "./Star";
-
-const TIER_TITLES: Record<Tier, string> = {
-  novice: "Новичок",
-  advanced: "Продвинутый",
-  pro: "Профессионал",
-};
-
-const TIER_NOTES: Record<Tier, string> = {
-  novice: "место правки помечено TODO",
-  advanced: "тот же код без указания, где править",
-  pro: "только контракт, решение с нуля",
-};
+import { dictFor, type Dict, type Lang } from "@/lib/i18n";
 
 type Props = {
   levelId: string;
@@ -28,6 +17,7 @@ type Props = {
   hintHtml: string;
   nextHref: string | null;
   nextTitle: string | null;
+  lang: Lang;
 };
 
 type State = "idle" | "busy" | "done";
@@ -41,6 +31,7 @@ function hintsFrom(
   tier: Tier,
   hasNovice: boolean,
   levelHint: string,
+  dict: Dict,
 ): Hint[] {
   const lines = output.split("\n").map((l) => l.trim());
   const failed = lines.filter((l) => l.startsWith("✗")).map((l) => l.slice(1).trim());
@@ -58,37 +49,25 @@ function hintsFrom(
   const hints: Hint[] = [];
 
   if (verdict === null) {
-    hints.push({
-      title: "с чего начать",
-      body: "Проверка ещё не запускалась. Запустите заготовку как есть — она назовёт условия, которые не сошлись. Это быстрее, чем вычитывать код глазами.",
-    });
+    hints.push({ title: dict.hStartTitle, body: dict.hStartBody });
   } else if (verdict === 0) {
-    hints.push({
-      title: "всё сошлось",
-      body: "Условия выполнены, уровень засчитан. Следующий уже открыт — ссылка в зелёной полосе.",
-    });
+    hints.push({ title: dict.hDoneTitle, body: dict.hDoneBody });
   } else if (failed.length > 0) {
     hints.push({
-      title: failed.length === 1 ? "не сошлось условие" : "не сошлись условия",
+      title: failed.length === 1 ? dict.hOneFailed : dict.hManyFailed,
       body: failed.join("\n"),
     });
   } else {
-    hints.push({
-      title: "прогон не дошёл до проверки",
-      body: "Условия даже не считались. Смотрите вывод целиком: там сказано, на чём всё оборвалось.",
-    });
+    hints.push({ title: dict.hNoChecksTitle, body: dict.hNoChecksBody });
   }
 
-  if (said) hints.push({ title: "что говорит движок", body: said.replace(/^FAIL\s*/, "") });
-  if (levelHint) hints.push({ title: "подсказка уровня", body: levelHint, html: true });
+  if (said) hints.push({ title: dict.hEngineTitle, body: said });
+  if (levelHint) hints.push({ title: dict.hLevelTitle, body: levelHint, html: true });
 
   if (verdict !== 0) {
     hints.push({
-      title: "куда ещё посмотреть",
-      body:
-        (tier !== "novice" && hasNovice
-          ? "Сложность «Новичок» показывает место правки: нужная строка помечена TODO. "
-          : "") + "В разборе рядом с уроком второй шаг показывает, что выдаёт заготовка, третий — решение целиком.",
+      title: dict.hWhereTitle,
+      body: (tier !== "novice" && hasNovice ? dict.hWhereNovice : "") + dict.hWhereBody,
     });
   }
 
@@ -105,7 +84,9 @@ export default function Runner({
   hintHtml,
   nextHref,
   nextTitle,
+  lang,
 }: Props) {
+  const dict = dictFor(lang);
   const tiers = (Object.keys(starters) as Tier[]).filter((t) => starters[t]);
   const first = tiers[0] ?? "novice";
   const [tier, setTier] = useState<Tier>(first);
@@ -134,7 +115,7 @@ export default function Runner({
     setState("done");
     setStage("");
     setVerdict(2);
-    setOutput("^C  прогон прерван вручную");
+    setOutput(dict.interrupted);
   }
 
   const run = useCallback(() => {
@@ -148,14 +129,14 @@ export default function Runner({
     setOutput("");
     setVerdict(null);
     setHintOpen(false);
-    setStage("готовлю прогон");
+    setStage(dict.preparing);
 
     // Без этого сбой воркера не виден вовсе: он не всплывает в консоль страницы.
     w.onerror = (event) => {
       setStage("");
       setState("done");
       setVerdict(2);
-      setOutput(`воркер не запустился: ${event.message ?? "неизвестная ошибка"}`);
+      setOutput(dict.workerFailed(event.message ?? dict.unknownError));
       w.terminate();
       worker.current = null;
     };
@@ -184,7 +165,7 @@ export default function Runner({
       agentName: name,
       where: `${name} · ${tier}`,
     });
-  }, [code, engine, levelId, scenario, starters, tier]);
+  }, [code, dict, engine, levelId, scenario, starters, tier]);
 
   const busy = state === "busy";
   const passed = verdict === 0;
@@ -204,13 +185,13 @@ export default function Runner({
                 : { color: "var(--ink-2)" }
             }
           >
-            {TIER_TITLES[t]}
+            {dict.tierTitles[t]}
           </button>
         ))}
-        <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>{TIER_NOTES[tier]}</span>
+        <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>{dict.tierNotes[tier]}</span>
       </div>
 
-      <TermWindow title={`${starters[tier]?.file ?? "agent.py"} — правьте здесь`}>
+      <TermWindow title={dict.editorTitle(starters[tier]?.file ?? "agent.py")}>
         <textarea
           className="term-edit"
           value={code}
@@ -228,16 +209,16 @@ export default function Runner({
 
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
         <button className="btn btn-go" onClick={run} disabled={busy}>
-          Запустить
+          {dict.run}
         </button>
         <span className="chip">Ctrl ⏎</span>
         {busy ? (
           <button className="btn btn-quiet" onClick={stop}>
-            Прервать
+            {dict.stop}
           </button>
         ) : null}
         <button className="btn btn-quiet" onClick={() => reset(tier)} disabled={busy}>
-          Вернуть заготовку
+          {dict.resetStarter}
         </button>
         {solution ? (
           <button
@@ -245,7 +226,7 @@ export default function Runner({
             onClick={() => reset(tier, solution.code)}
             disabled={busy}
           >
-            Подставить эталон
+            {dict.fillSolution}
           </button>
         ) : null}
       </div>
@@ -253,7 +234,7 @@ export default function Runner({
       <Terminal
         title={`agentquests — ${starters[tier]?.file ?? "agent.py"}`}
         prompt={busy || output ? `$ ${command}\n` : ""}
-        output={output || (busy ? stage : "Нажмите «Запустить» — вывод появится здесь.")}
+        output={output || (busy ? stage : dict.idleOutput)}
         live={busy}
       />
 
@@ -273,12 +254,10 @@ export default function Runner({
           <strong
             style={{ fontSize: "1rem", fontWeight: 750, color: passed ? "var(--ok)" : "var(--no)" }}
           >
-            {passed ? "Уровень пройден" : "Пока не сходится"}
+            {passed ? dict.passedTitle : dict.failedTitle}
           </strong>
           <span style={{ fontSize: "0.88rem", color: "var(--ink-2)" }}>
-            {passed
-              ? "Следующий уровень открыт."
-              : "Каждая строка с ✗ называет своё условие."}
+            {passed ? dict.passedNote : dict.failedNote}
           </span>
           {passed && nextHref ? (
             <a className="btn btn-small btn-go" href={nextHref} style={{ marginLeft: "auto" }}>
@@ -291,7 +270,7 @@ export default function Runner({
               style={{ marginLeft: "auto" }}
               onClick={() => setHintOpen((was) => !was)}
             >
-              {hintOpen ? "Убрать подсказки" : "Спросить звезду"}
+              {hintOpen ? dict.hideHints : dict.askStar}
             </button>
           ) : null}
         </div>
@@ -300,11 +279,12 @@ export default function Runner({
       {/* Подсказки живут в одном месте — у звезды. Кнопка выше только
           открывает её облачко, второй панели с подсказкой на странице нет. */}
       <Star
-        hints={hintsFrom(output, verdict, tier, !!starters.novice, hintHtml)}
+        hints={hintsFrom(output, verdict, tier, !!starters.novice, hintHtml, dict)}
         mood={busy ? "think" : passed ? "cheer" : verdict === null ? "idle" : "sad"}
         open={hintOpen}
         onOpenChange={setHintOpen}
-        heading={passed ? "Готово!" : "Чем помочь?"}
+        heading={passed ? dict.starHeadingDone : dict.starHeading}
+        lang={lang}
       />
     </div>
   );

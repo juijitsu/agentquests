@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { blockedBy, levelOpen, readDone, type Outline } from "./progress";
+import { dictFor, type Lang } from "@/lib/i18n";
 
 type Props = {
   outline: Outline;
   levelId: string;
   titles: Record<string, { title: string; href: string }>;
+  lang: Lang;
   children: React.ReactNode;
 };
 
-export default function Gate({ outline, levelId, titles, children }: Props) {
+export default function Gate({ outline, levelId, titles, lang, children }: Props) {
+  const dict = dictFor(lang);
   const [state, setState] = useState<"checking" | "open" | "locked">("checking");
   const [need, setNeed] = useState<string | null>(null);
 
@@ -48,11 +51,11 @@ export default function Gate({ outline, levelId, titles, children }: Props) {
           margin: "0.8rem 0 0.5rem",
         }}
       >
-        Уровень ещё закрыт
+        {dict.gateTitle}
       </h1>
       <p style={{ color: "var(--ink-2)", margin: "0 0 1.4rem" }}>
-        Порядок здесь не формальность: каждый уровень опирается на предыдущий.
-        {target ? " Откройте его, пройдя вот этот." : ""}
+        {dict.gateBody}
+        {target ? dict.gateBodyMore : ""}
       </p>
       {target ? (
         <a className="btn btn-go" href={target.href}>

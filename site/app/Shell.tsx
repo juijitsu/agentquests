@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { dictFor, type Lang } from "@/lib/i18n";
 
 export type Entry = {
   title: string;
@@ -11,11 +13,32 @@ export type Entry = {
 };
 
 const THEME_KEY = "aq-theme";
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 /** Ставит тему до первой отрисовки: иначе на долю секунды мигает чужая. */
 export const themeScript = `(function(){try{var t=localStorage.getItem("${THEME_KEY}");if(t)document.documentElement.dataset.theme=t}catch(e){}})()`;
 
-export default function Shell({ entries, home }: { entries: Entry[]; home: string }) {
+/** Тот же экран на другом языке. Русский живёт без префикса, английский под
+    /en — поэтому переключатель не «меняет настройку», а ведёт на соседний
+    адрес: язык виден в ссылке, и ссылкой можно поделиться. */
+function twin(path: string, other: Lang): string {
+  const bare =
+    path === "/en" || path === "/en/" ? "/" : path.startsWith("/en/") ? path.slice(3) : path;
+  const target = other === "en" ? (bare === "/" ? "/en/" : `/en${bare}`) : bare;
+  return `${base}${target}`;
+}
+
+export default function Shell({
+  entries,
+  home,
+  lang,
+}: {
+  entries: Entry[];
+  home: string;
+  lang: Lang;
+}) {
+  const dict = dictFor(lang);
+  const path = usePathname() || "/";
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -25,8 +48,7 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
   useEffect(() => {
     const saved = document.documentElement.dataset.theme as "light" | "dark" | undefined;
     setTheme(
-      saved ??
-        (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+      saved ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
     );
   }, []);
 
@@ -65,9 +87,7 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
   const found = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = q
-      ? entries.filter((e) =>
-          `${e.title} ${e.track} ${e.idea}`.toLowerCase().includes(q),
-        )
+      ? entries.filter((e) => `${e.title} ${e.track} ${e.idea}`.toLowerCase().includes(q))
       : entries;
     return list.slice(0, 40);
   }, [entries, query]);
@@ -97,7 +117,7 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
             padding: "0 clamp(0.8rem, 4vw, 2rem)",
             display: "flex",
             alignItems: "center",
-            gap: "0.8rem",
+            gap: "0.5rem",
           }}
         >
           <a href={home} style={{ fontWeight: 800, fontSize: "1.02rem", letterSpacing: "-0.02em" }}>
@@ -108,17 +128,26 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
             className="btn btn-quiet btn-small"
             onClick={() => setOpen(true)}
             style={{ marginLeft: "auto", display: "flex", gap: "0.45rem", alignItems: "center" }}
-            aria-label="Открыть поиск по уровням"
           >
-            Поиск
+            {dict.search}
             <span className="chip">Ctrl K</span>
           </button>
+
+          <a
+            className="btn btn-quiet btn-small"
+            href={twin(path, dict.other)}
+            title={dict.switchTitle}
+            hrefLang={dict.other}
+            style={{ fontWeight: 700, letterSpacing: "0.03em" }}
+          >
+            {dict.otherLabel}
+          </a>
 
           <button
             className="btn btn-quiet btn-small"
             onClick={flip}
-            aria-label="Переключить тему"
-            title="Переключить тему"
+            aria-label={theme === "dark" ? dict.toLight : dict.toDark}
+            title={theme === "dark" ? dict.toLight : dict.toDark}
             style={{ minWidth: "2.6rem" }}
           >
             {theme === "dark" ? "☾" : "☀"}
@@ -153,7 +182,7 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
             <input
               ref={input}
               value={query}
-              placeholder="Уровень или трек…"
+              placeholder={dict.searchPlaceholder}
               onChange={(e) => {
                 setQuery(e.target.value);
                 setCursor(0);
@@ -184,7 +213,7 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
             <div style={{ overflowY: "auto" }}>
               {found.length === 0 ? (
                 <p style={{ padding: "1rem", margin: 0, color: "var(--ink-3)" }}>
-                  Ничего не нашлось.
+                  {dict.nothingFound}
                 </p>
               ) : (
                 found.map((e, i) => (

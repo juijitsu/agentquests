@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { levelOpen, readDone, type Outline } from "./progress";
+import { dictFor, type Lang } from "@/lib/i18n";
 
 export type Card = {
   id: string;
@@ -17,10 +18,13 @@ export type Group = { slug: string; title: string; planned: number; levels: Card
 export default function Tracks({
   groups,
   outline,
+  lang,
 }: {
   groups: Group[];
   outline: Outline;
+  lang: Lang;
 }) {
+  const dict = dictFor(lang);
   const [done, setDone] = useState<string[] | null>(null);
 
   useEffect(() => setDone(readDone()), []);
@@ -63,11 +67,11 @@ export default function Tracks({
               </span>
               {passed > 0 ? (
                 <span className="chip" style={{ background: "var(--ok-soft)", color: "var(--ok)" }}>
-                  пройдено {passed}
+                  {dict.passed(passed)}
                 </span>
               ) : (
                 <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>
-                  первый уровень открыт — начинать можно отсюда
+                  {dict.firstOpen}
                 </span>
               )}
             </div>

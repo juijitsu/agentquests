@@ -1,39 +1,45 @@
-import Link from "next/link";
 import { marked } from "marked";
 import { allLevels, directory, findLevel, outline } from "@/lib/content";
-import Gate from "../../Gate";
-import Walkthrough from "../../Walkthrough";
-import Terminal from "../../Terminal";
-import LevelStar from "../../LevelStar";
+import { at, dictFor, type Lang } from "@/lib/i18n";
+import Gate from "../Gate";
+import Walkthrough from "../Walkthrough";
+import Terminal from "../Terminal";
+import LevelStar from "../LevelStar";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-export function generateStaticParams() {
-  return allLevels().map((l) => ({ track: l.trackSlug, level: l.slug }));
-}
 
 function html(md: string) {
   return { __html: marked.parse(md, { async: false }) as string };
 }
 
-export default async function LevelPage({
-  params,
+export default function Level({
+  lang,
+  track,
+  slug,
 }: {
-  params: Promise<{ track: string; level: string }>;
+  lang: Lang;
+  track: string;
+  slug: string;
 }) {
-  const { track, level: slug } = await params;
-  const level = findLevel(track, slug);
+  const dict = dictFor(lang);
+  const level = findLevel(lang, track, slug);
   if (!level) return null;
 
-  const siblings = allLevels().filter((l) => l.trackSlug === track);
-  const at = siblings.findIndex((l) => l.slug === slug);
-  const prev = siblings[at - 1];
-  const next = siblings[at + 1];
+  const here = (path: string) => at(lang, base, path);
+  const siblings = allLevels(lang).filter((l) => l.trackSlug === track);
+  const spot = siblings.findIndex((l) => l.slug === slug);
+  const prev = siblings[spot - 1];
+  const next = siblings[spot + 1];
   const levelId = `${level.trackSlug}/${level.slug}`;
-  const solveHref = `${base}/${level.trackSlug}/${level.slug}/solve/`;
+  const lesson = level.translated ? undefined : "ru";
 
   return (
-    <Gate outline={outline()} levelId={levelId} titles={directory(base)}>
+    <Gate
+      outline={outline()}
+      levelId={levelId}
+      titles={directory(lang, here(""))}
+      lang={lang}
+    >
       <div
         style={{
           maxWidth: "78rem",
@@ -53,18 +59,21 @@ export default async function LevelPage({
                 alignItems: "baseline",
               }}
             >
-              <Link
-                href="/"
+              <a
+                href={here("/")}
                 style={{ fontSize: "0.84rem", color: "var(--ink-2)", fontWeight: 600 }}
               >
-                ← все треки
-              </Link>
+                {dict.allTracks}
+              </a>
               <span className="chip">{level.track}</span>
-              <span className="chip">{level.minutes} мин</span>
+              <span className="chip">
+                {level.minutes} {dict.minutes}
+              </span>
               <span className="chip">{level.lang}</span>
             </div>
 
             <h1
+              lang={lesson}
               style={{
                 fontSize: "clamp(1.7rem, 4.5vw, 2.3rem)",
                 fontWeight: 780,
@@ -76,23 +85,40 @@ export default async function LevelPage({
             >
               {level.title}
             </h1>
-            <p
-              style={{
-                color: "var(--ink-2)",
-                margin: "0 0 2.4rem",
-                fontSize: "1.04rem",
-              }}
-            >
+            <p lang={lesson} style={{ color: "var(--ink-2)", margin: "0 0 1.4rem", fontSize: "1.04rem" }}>
               {level.idea}
             </p>
 
-            <div className="prose" dangerouslySetInnerHTML={html(level.theory)} />
+            {/* Перевода урока ещё нет — об этом говорится прямо, а не
+                подсовывается русский текст под видом английского. */}
+            {lesson === "ru" && lang !== "ru" ? (
+              <div
+                className="card"
+                style={{
+                  padding: "0.7rem 0.9rem",
+                  marginBottom: "2rem",
+                  fontSize: "0.88rem",
+                  color: "var(--ink-2)",
+                }}
+              >
+                <strong style={{ color: "var(--ink)", fontWeight: 680 }}>
+                  {dict.notTranslatedTitle}
+                </strong>{" "}
+                {dict.notTranslatedBody}
+              </div>
+            ) : (
+              <div style={{ height: "1rem" }} />
+            )}
+
+            <div lang={lesson} className="prose" dangerouslySetInnerHTML={html(level.theory)} />
             <div
+              lang={lesson}
               className="prose"
               style={{ marginTop: "3rem" }}
               dangerouslySetInnerHTML={html(level.method)}
             />
             <div
+              lang={lesson}
               className="prose"
               style={{ marginTop: "3rem" }}
               dangerouslySetInnerHTML={html(level.task)}
@@ -111,19 +137,19 @@ export default async function LevelPage({
               }}
             >
               {prev ? (
-                <Link href={`/${prev.trackSlug}/${prev.slug}/`} style={{ color: "var(--ink-2)" }}>
+                <a href={here(`/${prev.trackSlug}/${prev.slug}/`)} style={{ color: "var(--ink-2)" }}>
                   ← {prev.title}
-                </Link>
+                </a>
               ) : (
                 <span />
               )}
               {next ? (
-                <Link
-                  href={`/${next.trackSlug}/${next.slug}/`}
+                <a
+                  href={here(`/${next.trackSlug}/${next.slug}/`)}
                   style={{ color: "var(--accent)", textAlign: "right" }}
                 >
                   {next.title} →
-                </Link>
+                </a>
               ) : (
                 <span />
               )}
@@ -137,51 +163,48 @@ export default async function LevelPage({
               solution={level.solution?.code ?? null}
               solutionName={level.solution?.file ?? "agent.py"}
               demo={level.demo}
-              solveHref={solveHref}
+              solveHref={here(`/${level.trackSlug}/${level.slug}/solve/`)}
+              lang={lang}
             />
           ) : (
             <aside
               style={{
                 position: "sticky",
-                top: "4.2rem",
+                top: "calc(var(--header-h) + var(--top-gap))",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.7rem",
               }}
             >
               <div className="card" style={{ padding: "1rem" }}>
-                <strong style={{ fontWeight: 700 }}>Уровень на {level.lang}</strong>
+                <strong style={{ fontWeight: 700 }}>{dict.otherLangTitle(level.lang)}</strong>
                 <p style={{ margin: "0.4rem 0 0", fontSize: "0.9rem", color: "var(--ink-2)" }}>
-                  В браузере он не запускается: там живёт только Python. Значит
-                  запуск один — в своей консоли, из корня репозитория.
+                  {dict.otherLangBody}
                 </p>
               </div>
               {/* Команда нужна именно здесь: другого способа проверить себя
                   на этом уровне нет. Там, где работает кнопка, её не показываем. */}
-              <Terminal title="в своём терминале" output={`$ ${level.command}`} />
+              <Terminal title={dict.ownTerminal} output={`$ ${level.command}`} />
             </aside>
           )}
         </div>
 
-        {/* Подсказки уровня — только из самого уровня: его смысл, его блок
-            «Если застряли» и способ запуска. Ничего сверх того, что написано. */}
         <LevelStar
+          lang={lang}
           hints={[
-            { title: "про что уровень", body: level.idea },
+            { title: dict.hAboutTitle, body: level.idea },
             ...(level.hint
               ? [
                   {
-                    title: "подсказка уровня",
+                    title: dict.hLevelTitle,
                     body: marked.parse(level.hint, { async: false }) as string,
                     html: true,
                   },
                 ]
               : []),
             {
-              title: "где решать",
-              body: level.runnable
-                ? "Кнопка «Решать этот уровень» открывает страницу с терминалом прямо в браузере. Заготовка там уже лежит — её и правят."
-                : `Этот уровень в браузере не идёт. Запуск в своей консоли, из корня репозитория: ${level.command}`,
+              title: dict.hSolveTitle,
+              body: level.runnable ? dict.hSolveBrowser : dict.hSolveConsole(level.command),
             },
           ]}
         />

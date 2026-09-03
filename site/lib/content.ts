@@ -1,9 +1,11 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import runs from "./runs.json";
 import { join } from "node:path";
+import { dictFor, type Lang } from "./i18n";
 
 /** Уровни лежат рядом с сайтом и остаются единственным источником правды. */
-const ROOT = join(process.cwd(), "..", "content", "ru");
+const CONTENT = join(process.cwd(), "..", "content");
+const SOURCE = join(CONTENT, "ru");
 const ENGINE = join(process.cwd(), "..", "engine");
 
 const TIERS = ["novice", "advanced", "pro"] as const;
@@ -41,6 +43,9 @@ export type Level = {
   /** Порядковый номер трека и уровня — по ним считаются замки. */
   trackIndex: number;
   indexInTrack: number;
+  /** Урок есть на выбранном языке. Где нет — показывается русский и честная
+      пометка об этом, а не молчаливая подмена. */
+  translated: boolean;
 };
 
 export type Run = { output: string; code: number };
@@ -60,13 +65,14 @@ export type Track = {
   levels: Level[];
 };
 
-const TRACK_TITLES: Record<string, string> = {
-  foundations: "Фундамент",
-  "agent-core": "Агентный трек",
-  context: "Контекст",
-  retrieval: "Поиск",
-  evaluation: "Оценка",
-};
+/** Папка уровня на нужном языке. Состав курса всегда берётся из русской
+    ветки — она источник правды о том, какие уровни существуют; язык может
+    только заменить документы. Нет перевода — читается русский. */
+function levelDirFor(lang: Lang, trackDir: string, levelDir: string) {
+  const here = join(CONTENT, lang, trackDir, levelDir);
+  const translated = existsSync(join(here, "level.yaml"));
+  return { dir: translated ? here : join(SOURCE, trackDir, levelDir), translated };
+}
 
 function read(path: string): string {
   return existsSync(path) ? readFileSync(path, "utf8") : "";
@@ -141,19 +147,22 @@ function scenarioIn(dir: string): { name: string; code: string } {
   return file ? { name: file, code: read(join(dir, file)) } : { name: "", code: "" };
 }
 
-let cache: Track[] | null = null;
+const cache: Partial<Record<Lang, Track[]>> = {};
 
-export function tracks(): Track[] {
-  if (cache) return cache;
+export function tracks(lang: Lang): Track[] {
+  const ready = cache[lang];
+  if (ready) return ready;
 
-  cache = readdirSync(ROOT)
-    .filter((d) => existsSync(join(ROOT, d)))
+  const titles = dictFor(lang).tracks;
+
+  const built = readdirSync(SOURCE)
+    .filter((d) => existsSync(join(SOURCE, d)))
     .sort()
     .map((trackDir) => {
-      const levels = readdirSync(join(ROOT, trackDir))
+      const levels = readdirSync(join(SOURCE, trackDir))
         .sort()
         .map((levelDir): Level | null => {
-          const dir = join(ROOT, trackDir, levelDir);
+          const { dir, translated } = levelDirFor(lang, trackDir, levelDir);
           const card = meta(dir);
           if (!card.id) return null;
 
@@ -165,11 +174,11 @@ export function tracks(): Track[] {
           }
 
           const [trackSlug, slug] = card.id.split("/");
-          const here = `content/ru/${trackDir}/${levelDir}`;
+          const here = `content/${translated ? lang : "ru"}/${trackDir}/${levelDir}`;
           return {
             slug,
             trackSlug,
-            track: TRACK_TITLES[trackSlug] ?? trackSlug,
+            track: titles[trackSlug] ?? trackSlug,
             order: Number(card.order ?? 0),
             title: card.title ?? levelDir,
             idea: card.idea ?? "",
@@ -189,6 +198,7 @@ export function tracks(): Track[] {
             demo: (runs as Record<string, Level["demo"]>)[card.id] ?? {},
             trackIndex: 0,
             indexInTrack: 0,
+            translated,
             runnable:
               scenarioIn(dir).name.endsWith(".py") &&
               (solution?.file.endsWith(".py") || solution?.file.endsWith(".sql")) === true,
@@ -210,34 +220,39 @@ export function tracks(): Track[] {
     })
     .filter((t) => t.levels.length > 0);
 
-  cache.forEach((t, i) => t.levels.forEach((l) => (l.trackIndex = i)));
+  built.forEach((t, i) => t.levels.forEach((l) => (l.trackIndex = i)));
+  cache[lang] = built;
 
-  return cache;
+  return built;
 }
 
-export function allLevels(): Level[] {
-  return tracks().flatMap((t) => t.levels);
+export function allLevels(lang: Lang): Level[] {
+  return tracks(lang).flatMap((t) => t.levels);
 }
 
-export function findLevel(trackSlug: string, slug: string): Level | undefined {
-  return allLevels().find((l) => l.trackSlug === trackSlug && l.slug === slug);
+export function findLevel(lang: Lang, trackSlug: string, slug: string): Level | undefined {
+  return allLevels(lang).find((l) => l.trackSlug === trackSlug && l.slug === slug);
 }
 
-/** Порядок треков и уровней — по нему клиент считает замки. */
+/** Порядок треков и уровней — по нему клиент считает замки. Состав курса от
+    языка не зависит, поэтому берётся русская ветка. */
 export function outline(): { track: string; levels: string[] }[] {
-  return tracks().map((t) => ({
+  return tracks("ru").map((t) => ({
     track: t.slug,
     levels: t.levels.map((l) => `${l.trackSlug}/${l.slug}`),
   }));
 }
 
 /** Названия и адреса всех уровней — чтобы замок мог сказать, куда идти. */
-export function directory(base: string): Record<string, { title: string; href: string }> {
+export function directory(
+  lang: Lang,
+  prefix: string,
+): Record<string, { title: string; href: string }> {
   const out: Record<string, { title: string; href: string }> = {};
-  for (const l of allLevels()) {
+  for (const l of allLevels(lang)) {
     out[`${l.trackSlug}/${l.slug}`] = {
       title: l.title,
-      href: `${base}/${l.trackSlug}/${l.slug}/`,
+      href: `${prefix}/${l.trackSlug}/${l.slug}/`,
     };
   }
   return out;

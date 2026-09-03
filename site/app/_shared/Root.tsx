@@ -1,34 +1,32 @@
-import type { Metadata } from "next";
-import Shell, { themeScript, type Entry } from "./Shell";
+import Shell, { themeScript, type Entry } from "../Shell";
 import { allLevels } from "@/lib/content";
-import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "AgentQuests — курс по инженерии ИИ-агентов",
-  description:
-    "Восемь треков, каждый уровень проверяется тестами. Теория, метод, задание — и проверка, которую не пройти чтением.",
-};
+import { at, dictFor, type Lang } from "@/lib/i18n";
+import "../globals.css";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const entries: Entry[] = allLevels().map((l) => ({
+/** Общее тело обоих корневых макетов. Их два, потому что `<html lang>` может
+    задать только корневой макет, а язык страницы обязан быть настоящим:
+    английский текст под lang="ru" читалка озвучит по-русски. */
+export default function Root({ lang, children }: { lang: Lang; children: React.ReactNode }) {
+  const dict = dictFor(lang);
+  const entries: Entry[] = allLevels(lang).map((l) => ({
     title: l.title,
     track: l.track,
     idea: l.idea,
     order: l.order,
-    href: `${base}/${l.trackSlug}/${l.slug}/`,
+    href: at(lang, base, `/${l.trackSlug}/${l.slug}/`),
   }));
 
   return (
     // Скрипт темы правит data-theme до гидратации — расхождение здесь
     // ожидаемое, и подавляется именно на этом узле.
-    <html lang="ru" suppressHydrationWarning>
+    <html lang={dict.htmlLang} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <Shell entries={entries} home={`${base}/`} />
+        <Shell entries={entries} lang={lang} home={at(lang, base, "/")} />
         <main>{children}</main>
         <footer
           style={{
@@ -48,8 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               flexWrap: "wrap",
             }}
           >
-            <span>Уровни и движок — MIT.</span>
-            <span>Ни ключа, ни пакетов, ни сети.</span>
+            <span>{dict.footerLicense}</span>
+            <span>{dict.footerOffline}</span>
             <a
               href="https://github.com/juijitsu/agentquests"
               style={{ marginLeft: "auto", fontWeight: 600, color: "var(--ink-2)" }}

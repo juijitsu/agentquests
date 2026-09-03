@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { dictFor, type Lang } from "@/lib/i18n";
 
 export type Hint = { title: string; body: string; html?: boolean };
 export type Mood = "idle" | "think" | "cheer" | "sad";
@@ -64,9 +65,11 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   /** Что звезда говорит первой строкой облачка. */
   heading: string;
+  lang: Lang;
 };
 
-export default function Star({ hints, mood, open, onOpenChange, heading }: Props) {
+export default function Star({ hints, mood, open, onOpenChange, heading, lang }: Props) {
+  const dict = dictFor(lang);
   const uid = useId();
   const grad = `star-body-${uid}`;
   // Подсказки выдаются по одной: облачко, вываливающее всё разом, решает
@@ -105,7 +108,7 @@ export default function Star({ hints, mood, open, onOpenChange, heading }: Props
             <button
               className="star-close"
               onClick={() => onOpenChange(false)}
-              aria-label="Закрыть подсказки"
+              aria-label={dict.starClose}
             >
               ✕
             </button>
@@ -126,10 +129,10 @@ export default function Star({ hints, mood, open, onOpenChange, heading }: Props
 
           {shown < hints.length ? (
             <button className="btn btn-small" onClick={() => setShown((n) => n + 1)}>
-              Ещё подсказку ({hints.length - shown})
+              {dict.starMore(hints.length - shown)}
             </button>
           ) : (
-            <p className="star-done">Больше подсказок у меня нет.</p>
+            <p className="star-done">{dict.starNoMore}</p>
           )}
         </div>
       ) : null}
@@ -145,8 +148,8 @@ export default function Star({ hints, mood, open, onOpenChange, heading }: Props
         className={`star-button${open ? " star-thinking" : ""}`}
         onClick={() => onOpenChange(!open)}
         aria-expanded={open}
-        aria-label={open ? "Убрать подсказки" : "Показать подсказки"}
-        title={open ? "Убрать подсказки" : "Застряли? Нажмите"}
+        aria-label={open ? dict.hideHints : dict.starShow}
+        title={open ? dict.hideHints : dict.starStuck}
       >
         <svg viewBox="0 0 100 100" className="star-svg" aria-hidden="true">
           <defs>

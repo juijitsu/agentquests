@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Run } from "@/lib/content";
 import Terminal from "./Terminal";
+import { dictFor, type Lang } from "@/lib/i18n";
 
 type Step = {
   title: string;
@@ -19,15 +20,17 @@ type Props = {
   solutionName: string;
   demo: { novice?: Run; solution?: Run };
   solveHref: string;
+  lang: Lang;
 };
 
 /** Разбор строится из настоящих прогонов, снятых при сборке. Ничего не
     придумано: что показано, то движок и выдаёт. */
 function buildSteps(p: Props): Step[] {
+  const d = dictFor(p.lang);
   const steps: Step[] = [
     {
-      title: "Заготовка",
-      note: "С этого кода начинают. Он рабочий и делает не то.",
+      title: d.stepStarterTitle,
+      note: d.stepStarterNote,
       window: p.starterName,
       body: p.starter,
     },
@@ -35,17 +38,17 @@ function buildSteps(p: Props): Step[] {
 
   if (p.demo.novice) {
     steps.push({
-      title: "Что она выдаёт",
-      note: "Настоящий прогон заготовки — то же, что покажет вам проверка.",
-      window: "проверка",
+      title: d.stepOutputTitle,
+      note: d.stepOutputNote,
+      window: d.checkWindow,
       body: p.demo.novice.output,
     });
   }
 
   if (p.solution) {
     steps.push({
-      title: "Что меняется",
-      note: "Решение целиком. Открывайте после своей попытки.",
+      title: d.stepFixTitle,
+      note: d.stepFixNote,
       window: p.solutionName,
       body: p.solution,
     });
@@ -53,9 +56,9 @@ function buildSteps(p: Props): Step[] {
 
   if (p.demo.solution) {
     steps.push({
-      title: "Итог",
-      note: "Прогон решения. Все условия сходятся.",
-      window: "проверка",
+      title: d.stepDoneTitle,
+      note: d.stepDoneNote,
+      window: d.checkWindow,
       body: p.demo.solution.output,
     });
   }
@@ -64,6 +67,7 @@ function buildSteps(p: Props): Step[] {
 }
 
 export default function Walkthrough(props: Props) {
+  const dict = dictFor(props.lang);
   const steps = buildSteps(props);
   const [at, setAt] = useState(0);
   const [revealed, setRevealed] = useState(false);
@@ -83,25 +87,23 @@ export default function Walkthrough(props: Props) {
           приходится прокручивать всю страницу. */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
         <h2 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700, letterSpacing: "-0.015em" }}>
-          Разбор
+          {dict.walkTitle}
         </h2>
-        <span className="chip">
-          шаг {at + 1} из {steps.length}
-        </span>
+        <span className="chip">{dict.stepOf(at + 1, steps.length)}</span>
         <button
           className="btn btn-small btn-quiet"
           style={{ marginLeft: "auto" }}
           onClick={() => setAt((i) => Math.max(0, i - 1))}
           disabled={at === 0}
         >
-          ← Назад
+          {dict.back}
         </button>
         <button
           className="btn btn-small btn-quiet"
           onClick={() => setAt((i) => Math.min(steps.length - 1, i + 1))}
           disabled={at === steps.length - 1}
         >
-          Дальше →
+          {dict.next}
         </button>
       </div>
 
@@ -149,17 +151,17 @@ export default function Walkthrough(props: Props) {
             }}
           >
             <p style={{ margin: "0 0 0.8rem", maxWidth: "22rem" }}>
-              Дальше — решение. Сперва попробуйте сами: подсказки в теории хватает.
+              {dict.revealBody}
             </p>
             <button className="btn btn-small" onClick={() => setRevealed(true)}>
-              Всё равно показать
+              {dict.revealButton}
             </button>
           </div>
         )}
       </div>
 
       <a className="btn btn-go walk-cta" href={props.solveHref} style={{ padding: "0.5rem 1.1rem" }}>
-        Решать этот уровень →
+        {dict.solveCta}
       </a>
     </aside>
   );
