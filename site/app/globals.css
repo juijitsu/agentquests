@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+:root {
+  --ground: #f3f6f5;
+  --panel: #ffffff;
+  --panel-2: #e8eeec;
+  --line: #d3ddda;
+  --line-strong: #b4c3bf;
+  --ink: #16211f;
+  --ink-2: #4a5b57;
+  --ink-3: #71827e;
+  --accent: #0c6154;
+  --accent-soft: #d7ebe6;
+  --ok: #1f7a45;
+  --no: #a83a2b;
+  --sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "Cascadia Mono", "SF Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0b1110;
+    --panel: #121a18;
+    --panel-2: #1a2422;
+    --line: #223029;
+    --line-strong: #35473f;
+    --ink: #dfe8e5;
+    --ink-2: #97a8a3;
+    --ink-3: #6b7c77;
+    --accent: #4fc3ac;
+    --accent-soft: #14302b;
+    --ok: #5fd08a;
+    --no: #e8776a;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #0b1110;
+  --panel: #121a18;
+  --panel-2: #1a2422;
+  --line: #223029;
+  --line-strong: #35473f;
+  --ink: #dfe8e5;
+  --ink-2: #97a8a3;
+  --ink-3: #6b7c77;
+  --accent: #4fc3ac;
+  --accent-soft: #14302b;
+  --ok: #5fd08a;
+  --no: #e8776a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Разметка уроков приходит из markdown, поэтому стилизуется здесь. */
+.prose {
+  max-width: 38rem;
+}
+
+.prose > * + * {
+  margin-top: 1rem;
+}
+
+.prose h1 {
+  font-size: 1.45rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.4rem;
+  text-wrap: balance;
+}
+
+.prose h2 {
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  text-wrap: balance;
+}
+
+.prose h3 {
+  font-size: 0.98rem;
+  margin-top: 1.5rem;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.1rem 0 0.1rem 1rem;
+  margin-left: 0;
+  color: var(--ink-2);
+}
+
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--panel-2);
+  padding: 0.12em 0.36em;
+  border-radius: 3px;
+}
+
+.prose pre {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
+}
+
+.prose li + li {
+  margin-top: 0.35rem;
+}
+
+.prose table {
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: 0.4rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2rem 0;
+}
