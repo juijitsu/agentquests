@@ -74,6 +74,27 @@ export default function Solve({
           {level.idea}
         </p>
 
+        {/* Вердикт проверки печатается ниже, и на непереведённом уровне он
+            русский. Предупреждение о нём должно стоять на той странице, где
+            он появляется, а не только на странице урока. */}
+        {lesson === "ru" && lang !== "ru" ? (
+          <div
+            className="card"
+            style={{
+              padding: "0.7rem 0.9rem",
+              marginBottom: "1.6rem",
+              fontSize: "0.88rem",
+              color: "var(--ink-2)",
+              maxWidth: "40rem",
+            }}
+          >
+            <strong style={{ color: "var(--ink)", fontWeight: 680 }}>
+              {dict.notTranslatedTitle}
+            </strong>{" "}
+            {dict.notTranslatedBody}
+          </div>
+        ) : null}
+
         <Runner
           levelId={levelId}
           command={level.command}
