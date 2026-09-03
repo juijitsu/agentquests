@@ -1,0 +1,8 @@
+id: foundations/05-three-ways-to-break
+track: foundations
+order: 5
+title: Three ways to break
+idea: Looping, context overflow and invented arguments — that is the whole list.
+minutes: 20
+needs_api_key: false
+unlocks: foundations/06-error-as-message

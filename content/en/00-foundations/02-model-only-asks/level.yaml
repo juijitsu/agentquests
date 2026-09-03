@@ -1,0 +1,8 @@
+id: foundations/02-model-only-asks
+track: foundations
+order: 2
+title: The model only asks
+idea: The model performs no actions — it returns a request to perform them.
+minutes: 16
+needs_api_key: false
+unlocks: foundations/03-no-memory

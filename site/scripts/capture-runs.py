@@ -47,9 +47,12 @@ for scenario in sorted(ROOT.glob("content/*/*/*/scenario.py")):
         for line in io.open(level / "level.yaml", encoding="utf-8").read().splitlines()
         if ": " in line
     )
-    key = card.get("id")
-    if not key:
+    if not card.get("id"):
         continue
+    # Один и тот же уровень на двух языках несёт один id, и без языка в ключе
+    # снимки затирали бы друг друга: на английской странице показывался бы
+    # русский прогон.
+    key = f"{level.parents[1].name}/{card['id']}"
 
     entry = {}
     for tier, folder in (

@@ -1,0 +1,8 @@
+id: foundations/08-read-someone-elses-agent
+track: foundations
+order: 8
+title: Finale: reading someone else's agent
+idea: Everything so far at once, on code you did not write.
+minutes: 30
+needs_api_key: false
+unlocks: agent-core/01-plan-first

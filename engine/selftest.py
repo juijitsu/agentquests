@@ -39,11 +39,14 @@ def meta(level: Path) -> dict:
     return dict(line.split(": ", 1) for line in text.splitlines() if ": " in line)
 
 
-def chain(levels: list[Path]) -> list[str]:
+def chain(levels: list[Path], lang: str) -> list[str]:
     """Метаданные никто не читает, поэтому ломаются они молча.
 
     Проверяем два свойства: файл разбирается в полный набор полей и unlocks
     ведёт на существующий уровень. Последнему вести пока некуда.
+
+    Цепочка проверяется внутри языка: перевод несёт те же id, и общий список
+    покрывал бы дыру в одном языке уровнем из другого.
     """
     failures, cards = [], {}
     for level in levels:
@@ -61,7 +64,7 @@ def chain(levels: list[Path]) -> list[str]:
             failures.append(level.parent.name)
 
     if not failures:
-        print(f"  ✓ метаданные: цепочка цела, проверено уровней: {len(levels)}")
+        print(f"  ✓ метаданные {lang}: цепочка цела, проверено уровней: {len(levels)}")
     return failures
 
 
@@ -69,14 +72,26 @@ def main() -> int:
     levels = sorted(
         p for p in ROOT.glob("content/*/*/*/scenario.*") if p.suffix in RUNNABLE
     )
-    failures = chain(levels)
+
+    # levels — пути до scenario.*, поэтому язык лежит через три уровня вверх:
+    # scenario.py → каталог уровня → каталог трека → каталог языка.
+    by_lang: dict[str, list[Path]] = {}
+    for level in levels:
+        by_lang.setdefault(level.parents[2].name, []).append(level)
+
+    failures: list[str] = []
+    for lang, group in sorted(by_lang.items()):
+        failures += chain(group, lang)
+
     for level in levels:
         d = level.parent
         expected = [(d / "solution", 0)]
         expected += [(p, 1) for p in sorted((d / "starter").iterdir())]
 
         for folder, want in expected:
-            label = f"{d.name}/{folder.name}"
+            # Язык в метке обязателен: без него одинаковые уровни двух языков
+            # неразличимы, и непонятно, чей перевод сломан.
+            label = f"{level.parents[2].name} {d.name}/{folder.name}"
             agent = agent_file(folder)
             if agent is None:
                 # Иначе пропавший файл даёт exit=1 и засчитывается как «корректно упало».

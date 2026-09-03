@@ -1,0 +1,8 @@
+id: foundations/04-tool-descriptions
+track: foundations
+order: 4
+title: A tool is sold by its description
+idea: The model sees the name, the description and the schema — never the implementation.
+minutes: 18
+needs_api_key: false
+unlocks: foundations/05-three-ways-to-break

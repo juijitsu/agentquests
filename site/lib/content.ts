@@ -106,14 +106,14 @@ function codeIn(dir: string): Solution | null {
 
     Из файлов ничего не удаляется: их читают из репозитория и из командной
     строки, где обе вещи как раз нужны. */
-function taskForWeb(task: string): string {
+function taskForWeb(task: string, tiersHeading: string): string {
   const lines = task.split("\n");
   const out: string[] = [];
   let dropping = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith("## ")) dropping = line.startsWith("## Выберите сложность");
+    if (line.startsWith("## ")) dropping = line.startsWith(tiersHeading);
     if (dropping) continue;
 
     const opensRun =
@@ -134,10 +134,10 @@ function taskForWeb(task: string): string {
 }
 
 /** «Если застряли» уже написан в каждом задании — незачем сочинять второй. */
-function hintFrom(task: string): string {
-  const at = task.indexOf("## Если застряли");
+function hintFrom(task: string, heading: string): string {
+  const at = task.indexOf(heading);
   if (at < 0) return "";
-  const rest = task.slice(at + "## Если застряли".length);
+  const rest = task.slice(at + heading.length);
   const end = rest.indexOf("\n## ");
   return (end < 0 ? rest : rest.slice(0, end)).trim();
 }
@@ -163,6 +163,10 @@ export function tracks(lang: Lang): Track[] {
         .sort()
         .map((levelDir): Level | null => {
           const { dir, translated } = levelDirFor(lang, trackDir, levelDir);
+          // Заголовки внутри задания ищутся на языке файлов, а не страницы:
+          // непереведённый урок остаётся русским, и английские заголовки в
+          // нём не найдутся.
+          const docs = dictFor(translated ? lang : "ru");
           const card = meta(dir);
           if (!card.id) return null;
 
@@ -190,12 +194,17 @@ export function tracks(lang: Lang): Track[] {
             }`,
             theory: read(join(dir, "theory.md")),
             method: read(join(dir, "method.md")),
-            task: taskForWeb(read(join(dir, "task.md"))),
+            task: taskForWeb(read(join(dir, "task.md")), docs.taskTiers),
             scenario: scenarioIn(dir).code,
-            hint: hintFrom(read(join(dir, "task.md"))),
+            hint: hintFrom(read(join(dir, "task.md")), docs.taskHint),
             solution,
             starters,
-            demo: (runs as Record<string, Level["demo"]>)[card.id] ?? {},
+            // Снимок берётся того языка, чьи файлы читаются: у перевода свои
+            // заготовки, и русский прогон им не соответствует.
+            demo:
+              (runs as Record<string, Level["demo"]>)[
+                `${translated ? lang : "ru"}/${card.id}`
+              ] ?? {},
             trackIndex: 0,
             indexInTrack: 0,
             translated,

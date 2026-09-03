@@ -1,0 +1,8 @@
+id: foundations/03-no-memory
+track: foundations
+order: 3
+title: The model remembers nothing
+idea: An agent's memory is an array you resend from scratch every single time.
+minutes: 16
+needs_api_key: false
+unlocks: foundations/04-tool-descriptions

@@ -59,6 +59,12 @@ const ru = {
   minutes: "мин",
   backToLesson: "← к разбору",
 
+  /* Заголовки внутри задания. По ним со страницы снимается таблица сложностей
+     и достаётся подсказка, поэтому в переводе они обязаны совпадать с тем,
+     что написано в самих файлах. */
+  taskTiers: "## Выберите сложность",
+  taskHint: "## Если застряли",
+
   notTranslatedTitle: "",
   notTranslatedBody: "",
 
@@ -210,6 +216,9 @@ const en: Dict = {
   allTracks: "← all tracks",
   minutes: "min",
   backToLesson: "← back to lesson",
+
+  taskTiers: "## Choose a difficulty",
+  taskHint: "## If you get stuck",
 
   notTranslatedTitle: "Lesson is in Russian",
   notTranslatedBody:

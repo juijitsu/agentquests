@@ -1,0 +1,8 @@
+id: foundations/01-what-is-an-agent
+track: foundations
+order: 1
+title: What is actually going on
+idea: An agent is a while loop, not magic.
+minutes: 18
+needs_api_key: false
+unlocks: foundations/02-model-only-asks
