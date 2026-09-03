@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const DONE_KEY = "aq-done";
+import { levelOpen, readDone, trackOpen, type Outline } from "./progress";
 
 export type Card = {
   id: string;
@@ -15,45 +14,63 @@ export type Card = {
 
 export type Group = { slug: string; title: string; planned: number; levels: Card[] };
 
-export default function Tracks({ groups }: { groups: Group[] }) {
-  const [done, setDone] = useState<string[]>([]);
+export default function Tracks({
+  groups,
+  outline,
+}: {
+  groups: Group[];
+  outline: Outline;
+}) {
+  const [done, setDone] = useState<string[] | null>(null);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(DONE_KEY);
-      if (raw) setDone(JSON.parse(raw));
-    } catch {
-      /* приватный режим — прогресса просто не будет */
-    }
-  }, []);
+  useEffect(() => setDone(readDone()), []);
+
+  // Пока прогресс не прочитан, считаем всё открытым: замки, мигающие
+  // на каждой загрузке, раздражают сильнее, чем доля секунды без них.
+  const progress = done ?? [];
+  const known = done !== null;
 
   return (
-    <section style={{ marginTop: "3.5rem", display: "flex", flexDirection: "column", gap: "2.6rem" }}>
-      {groups.map((group) => {
-        const passed = group.levels.filter((l) => done.includes(l.id)).length;
-        const ready = group.levels.length === group.planned;
+    <section style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "2.4rem" }}>
+      {groups.map((group, at) => {
+        const passed = group.levels.filter((l) => progress.includes(l.id)).length;
+        const openTrack = !known || trackOpen(outline, at, progress);
+        const previous = groups[at - 1];
+
         return (
-          <div key={group.slug}>
+          <div key={group.slug} style={{ opacity: openTrack ? 1 : 0.62 }}>
             <div
               style={{
                 display: "flex",
                 alignItems: "baseline",
-                gap: "0.7rem",
+                gap: "0.6rem",
                 flexWrap: "wrap",
-                borderBottom: "2px solid var(--line)",
+                borderBottom: "1px solid var(--line)",
                 paddingBottom: "0.5rem",
-                marginBottom: "1rem",
+                marginBottom: "0.9rem",
               }}
             >
-              <h2 style={{ fontSize: "1.24rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
+              <h2
+                style={{
+                  fontSize: "1.18rem",
+                  fontWeight: 750,
+                  margin: 0,
+                  letterSpacing: "-0.02em",
+                }}
+              >
                 {group.title}
               </h2>
-              <span className="chip" style={ready ? { color: "var(--ok)" } : undefined}>
-                {group.levels.length}/{group.planned} написано
+              <span className="chip">
+                {group.levels.length}/{group.planned}
               </span>
               {passed > 0 ? (
                 <span className="chip" style={{ background: "var(--ok-soft)", color: "var(--ok)" }}>
                   пройдено {passed}
+                </span>
+              ) : null}
+              {!openTrack ? (
+                <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>
+                  🔒 откроется, когда пройден трек «{previous?.title}»
                 </span>
               ) : null}
             </div>
@@ -62,20 +79,24 @@ export default function Tracks({ groups }: { groups: Group[] }) {
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(17.5rem, 1fr))",
-                gap: "0.8rem",
+                gap: "0.7rem",
               }}
             >
               {group.levels.map((level) => {
-                const ok = done.includes(level.id);
+                const ok = progress.includes(level.id);
+                const open = !known || levelOpen(outline, level.id, progress);
+                const Tag = open ? "a" : "div";
                 return (
-                  <a
+                  <Tag
                     key={level.id}
-                    href={level.href}
+                    {...(open ? { href: level.href } : {})}
                     className="card"
                     style={{
                       display: "block",
-                      padding: "0.75rem 0.9rem",
-                      borderColor: ok ? "var(--ok)" : "var(--line-strong)",
+                      padding: "0.7rem 0.85rem",
+                      cursor: open ? "pointer" : "default",
+                      opacity: open ? 1 : 0.55,
+                      borderColor: ok ? "var(--ok)" : "var(--line)",
                       background: ok ? "var(--ok-soft)" : "var(--panel)",
                     }}
                   >
@@ -83,25 +104,25 @@ export default function Tracks({ groups }: { groups: Group[] }) {
                       <span className="chip" style={ok ? { color: "var(--ok)" } : undefined}>
                         {String(level.order).padStart(2, "0")}
                       </span>
-                      <span style={{ fontWeight: 700, fontSize: "0.96rem" }}>{level.title}</span>
+                      <span style={{ fontWeight: 680, fontSize: "0.95rem" }}>{level.title}</span>
                       <span
                         className="chip"
                         style={{ marginLeft: "auto", background: "transparent" }}
                       >
-                        {ok ? "✓" : level.lang}
+                        {ok ? "✓" : open ? level.lang : "🔒"}
                       </span>
                     </div>
                     <p
                       style={{
-                        margin: "0.3rem 0 0",
-                        fontSize: "0.86rem",
+                        margin: "0.28rem 0 0",
+                        fontSize: "0.85rem",
                         color: "var(--ink-2)",
                         lineHeight: 1.45,
                       }}
                     >
                       {level.idea}
                     </p>
-                  </a>
+                  </Tag>
                 );
               })}
             </div>

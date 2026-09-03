@@ -21,7 +21,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }));
 
   return (
-    <html lang="ru">
+    // Скрипт темы правит data-theme до гидратации — расхождение здесь
+    // ожидаемое, и подавляется именно на этом узле.
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

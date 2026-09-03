@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "npm run vendor && next dev",
-    "build": "npm run vendor && next build",
+    "build": "npm run vendor && npm run capture && next build",
     "start": "next start",
     "lint": "eslint",
-    "vendor": "node scripts/vendor-pyodide.mjs"
+    "vendor": "node scripts/vendor-pyodide.mjs",
+    "capture": "python scripts/capture-runs.py"
   },
   "dependencies": {
     "marked": "^18.0.11",

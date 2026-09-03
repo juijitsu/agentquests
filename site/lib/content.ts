@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
+import runs from "./runs.json";
 import { join } from "node:path";
 
 /** Уровни лежат рядом с сайтом и остаются единственным источником правды. */
@@ -32,7 +33,14 @@ export type Level = {
   starters: Partial<Record<Tier, Solution>>;
   /** Уровень исполним в браузере: сценарий на Python, решение на Python или SQL. */
   runnable: boolean;
+  /** Настоящие прогоны, снятые при сборке: заготовка и эталон. */
+  demo: { novice?: Run; solution?: Run };
+  /** Порядковый номер трека и уровня — по ним считаются замки. */
+  trackIndex: number;
+  indexInTrack: number;
 };
+
+export type Run = { output: string; code: number };
 
 /** Исходники движка едут в браузер как есть — второй реализации вердикта нет. */
 export function engineSources(): { kit: string; check: string } {
@@ -135,12 +143,19 @@ export function tracks(): Track[] {
             hint: hintFrom(read(join(dir, "task.md"))),
             solution,
             starters,
+            demo: (runs as Record<string, Level["demo"]>)[card.id] ?? {},
+            trackIndex: 0,
+            indexInTrack: 0,
             runnable:
               scenarioIn(dir).name.endsWith(".py") &&
               (solution?.file.endsWith(".py") || solution?.file.endsWith(".sql")) === true,
           };
         })
         .filter((l): l is Level => l !== null);
+
+      levels.forEach((l, i) => {
+        l.indexInTrack = i;
+      });
 
       const first = levels[0];
       return {
@@ -152,6 +167,8 @@ export function tracks(): Track[] {
     })
     .filter((t) => t.levels.length > 0);
 
+  cache.forEach((t, i) => t.levels.forEach((l) => (l.trackIndex = i)));
+
   return cache;
 }
 
@@ -161,4 +178,24 @@ export function allLevels(): Level[] {
 
 export function findLevel(trackSlug: string, slug: string): Level | undefined {
   return allLevels().find((l) => l.trackSlug === trackSlug && l.slug === slug);
+}
+
+/** Порядок треков и уровней — по нему клиент считает замки. */
+export function outline(): { track: string; levels: string[] }[] {
+  return tracks().map((t) => ({
+    track: t.slug,
+    levels: t.levels.map((l) => `${l.trackSlug}/${l.slug}`),
+  }));
+}
+
+/** Названия и адреса всех уровней — чтобы замок мог сказать, куда идти. */
+export function directory(base: string): Record<string, { title: string; href: string }> {
+  const out: Record<string, { title: string; href: string }> = {};
+  for (const l of allLevels()) {
+    out[`${l.trackSlug}/${l.slug}`] = {
+      title: l.title,
+      href: `${base}/${l.trackSlug}/${l.slug}/`,
+    };
+  }
+  return out;
 }

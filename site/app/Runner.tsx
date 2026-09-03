@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Solution, Tier } from "@/lib/content";
+import { saveDone } from "./progress";
+import Terminal from "./Terminal";
 
 const TIER_TITLES: Record<Tier, string> = {
   novice: "Новичок",
@@ -9,38 +11,36 @@ const TIER_TITLES: Record<Tier, string> = {
   pro: "Профессионал",
 };
 
-const DONE_KEY = "aq-done";
+const TIER_NOTES: Record<Tier, string> = {
+  novice: "место правки помечено TODO",
+  advanced: "тот же код без указания, где править",
+  pro: "только контракт, решение с нуля",
+};
 
 type Props = {
   levelId: string;
+  command: string;
   engine: { kit: string; check: string };
   scenario: string;
   starters: Partial<Record<Tier, Solution>>;
   solution: Solution | null;
   hintHtml: string;
+  nextHref: string | null;
+  nextTitle: string | null;
 };
 
 type State = "idle" | "busy" | "done";
 
-function remember(levelId: string) {
-  try {
-    const raw = localStorage.getItem(DONE_KEY);
-    const done: string[] = raw ? JSON.parse(raw) : [];
-    if (!done.includes(levelId)) {
-      localStorage.setItem(DONE_KEY, JSON.stringify([...done, levelId]));
-    }
-  } catch {
-    /* приватный режим — прогресс просто не сохранится */
-  }
-}
-
 export default function Runner({
   levelId,
+  command,
   engine,
   scenario,
   starters,
   solution,
   hintHtml,
+  nextHref,
+  nextTitle,
 }: Props) {
   const tiers = (Object.keys(starters) as Tier[]).filter((t) => starters[t]);
   const first = tiers[0] ?? "novice";
@@ -70,7 +70,7 @@ export default function Runner({
     setState("done");
     setStage("");
     setVerdict(2);
-    setOutput("Прогон прерван вручную.");
+    setOutput("^C  прогон прерван вручную");
   }
 
   const run = useCallback(() => {
@@ -84,14 +84,14 @@ export default function Runner({
     setOutput("");
     setVerdict(null);
     setHintOpen(false);
-    setStage("Готовлю прогон…");
+    setStage("готовлю прогон");
 
     // Без этого сбой воркера не виден вовсе: он не всплывает в консоль страницы.
     w.onerror = (event) => {
       setStage("");
       setState("done");
       setVerdict(2);
-      setOutput(`Воркер не запустился: ${event.message ?? "неизвестная ошибка"}`);
+      setOutput(`воркер не запустился: ${event.message ?? "неизвестная ошибка"}`);
       w.terminate();
       worker.current = null;
     };
@@ -106,7 +106,7 @@ export default function Runner({
       setState("done");
       setOutput(data.text);
       setVerdict(data.code ?? 1);
-      if (data.code === 0) remember(levelId);
+      if (data.code === 0) saveDone(levelId);
       w.terminate();
       worker.current = null;
     };
@@ -123,21 +123,11 @@ export default function Runner({
   }, [code, engine, levelId, scenario, starters, tier]);
 
   const busy = state === "busy";
+  const passed = verdict === 0;
 
   return (
-    <section
-      id="run"
-      style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "0.9rem" }}
-    >
-      <h2 style={{ fontSize: "1.3rem", fontWeight: 750, margin: 0, letterSpacing: "-0.015em" }}>
-        Проверить решение
-      </h2>
-      <p style={{ margin: 0, color: "var(--ink-2)", fontSize: "0.92rem", maxWidth: "38rem" }}>
-        Правьте код и запускайте — проверка та же, что в командной строке.
-        Python подгружается по первому запуску; пока вы читаете, он не тратится.
-      </p>
-
-      <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
         {tiers.map((t) => (
           <button
             key={t}
@@ -153,51 +143,65 @@ export default function Runner({
             {TIER_TITLES[t]}
           </button>
         ))}
+        <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>{TIER_NOTES[tier]}</span>
       </div>
 
-      <textarea
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        onKeyDown={(e) => {
-          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-            e.preventDefault();
-            if (!busy) run();
-          }
-        }}
-        spellCheck={false}
-        rows={Math.min(28, Math.max(12, code.split("\n").length + 1))}
-        style={{
-          width: "100%",
-          background: "var(--panel)",
-          color: "var(--ink)",
-          border: "2px solid var(--line-strong)",
-          borderRadius: 10,
-          padding: "0.85rem 1rem",
-          fontFamily: "var(--mono)",
-          fontSize: "0.8rem",
-          fontWeight: 500,
-          lineHeight: 1.6,
-          resize: "vertical",
-          boxShadow: "4px 4px 0 var(--shadow)",
-        }}
-      />
+      <div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: "0.5rem",
+            marginBottom: "0.35rem",
+          }}
+        >
+          <strong style={{ fontSize: "0.9rem", fontWeight: 680 }}>
+            {starters[tier]?.file ?? "agent.py"}
+          </strong>
+          <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>
+            это заготовка уровня — правьте её здесь
+          </span>
+        </div>
+        <textarea
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              if (!busy) run();
+            }
+          }}
+          spellCheck={false}
+          rows={Math.min(30, Math.max(14, code.split("\n").length + 1))}
+          style={{
+            width: "100%",
+            background: "var(--panel)",
+            color: "var(--ink)",
+            border: "1px solid var(--line-strong)",
+            borderRadius: 10,
+            padding: "0.85rem 1rem",
+            fontFamily: "var(--mono)",
+            fontSize: "0.8rem",
+            fontWeight: 500,
+            lineHeight: 1.6,
+            resize: "vertical",
+          }}
+        />
+      </div>
 
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
         <button className="btn btn-go" onClick={run} disabled={busy}>
           Запустить
         </button>
         <span className="chip">Ctrl ⏎</span>
-
         {busy ? (
           <button className="btn btn-quiet" onClick={stop}>
             Прервать
           </button>
         ) : null}
-
         <button className="btn btn-quiet" onClick={() => reset(tier)} disabled={busy}>
           Вернуть заготовку
         </button>
-
         {solution ? (
           <button
             className="btn btn-quiet"
@@ -207,42 +211,44 @@ export default function Runner({
             Подставить эталон
           </button>
         ) : null}
-
-        {stage ? (
-          <span style={{ fontSize: "0.86rem", fontWeight: 600, color: "var(--ink-3)" }}>
-            {stage}
-          </span>
-        ) : null}
       </div>
+
+      <Terminal
+        title={`agentquests — ${starters[tier]?.file ?? "agent.py"}`}
+        prompt={busy || output ? `$ ${command}\n` : ""}
+        output={output || (busy ? stage : "Нажмите «Запустить» — вывод появится здесь.")}
+        live={busy}
+      />
 
       {verdict !== null ? (
         <div
           className="card"
           style={{
-            padding: "0.7rem 1rem",
+            padding: "0.75rem 1rem",
             display: "flex",
             gap: "0.7rem",
             alignItems: "center",
             flexWrap: "wrap",
-            background: verdict === 0 ? "var(--ok-soft)" : "var(--no-soft)",
-            borderColor: verdict === 0 ? "var(--ok)" : "var(--no)",
+            background: passed ? "var(--ok-soft)" : "var(--no-soft)",
+            borderColor: passed ? "var(--ok)" : "var(--no)",
           }}
         >
           <strong
-            style={{
-              fontSize: "1rem",
-              fontWeight: 800,
-              color: verdict === 0 ? "var(--ok)" : "var(--no)",
-            }}
+            style={{ fontSize: "1rem", fontWeight: 750, color: passed ? "var(--ok)" : "var(--no)" }}
           >
-            {verdict === 0 ? "Уровень пройден" : "Пока не сходится"}
+            {passed ? "Уровень пройден" : "Пока не сходится"}
           </strong>
           <span style={{ fontSize: "0.88rem", color: "var(--ink-2)" }}>
-            {verdict === 0
-              ? "Все условия выполнены — можно идти дальше."
-              : "Смотрите строки с ✗ ниже: каждая называет своё условие."}
+            {passed
+              ? "Следующий уровень открыт."
+              : "Каждая строка с ✗ называет своё условие."}
           </span>
-          {verdict !== 0 && hintHtml ? (
+          {passed && nextHref ? (
+            <a className="btn btn-small btn-go" href={nextHref} style={{ marginLeft: "auto" }}>
+              {nextTitle} →
+            </a>
+          ) : null}
+          {!passed && hintHtml ? (
             <button
               className="btn btn-small"
               style={{ marginLeft: "auto" }}
@@ -261,40 +267,6 @@ export default function Runner({
           dangerouslySetInnerHTML={{ __html: hintHtml }}
         />
       ) : null}
-
-      {output ? (
-        <pre
-          className="card"
-          style={{
-            margin: 0,
-            padding: "0.9rem 1rem",
-            overflowX: "auto",
-            whiteSpace: "pre-wrap",
-            fontFamily: "var(--mono)",
-            fontSize: "0.8rem",
-            fontWeight: 500,
-            lineHeight: 1.6,
-          }}
-        >
-          {output.split("\n").map((line, i) => {
-            const mark = line.trimStart()[0];
-            const colour =
-              mark === "✓" || line.includes("PASS")
-                ? "var(--ok)"
-                : mark === "✗" || line.includes("FAIL")
-                  ? "var(--no)"
-                  : undefined;
-            return (
-              <span
-                key={i}
-                style={{ color: colour, display: "block", fontWeight: colour ? 600 : 500 }}
-              >
-                {line || " "}
-              </span>
-            );
-          })}
-        </pre>
-      ) : null}
-    </section>
+    </div>
   );
 }

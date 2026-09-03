@@ -1,4 +1,4 @@
-import { tracks, allLevels } from "@/lib/content";
+import { tracks, allLevels, outline } from "@/lib/content";
 import Tracks, { type Group } from "./Tracks";
 
 const PLANNED: Record<string, number> = {
@@ -81,13 +81,14 @@ export default function Home() {
             color: "var(--ink-2)",
           }}
         >
-          Открывайте любой уровень, правьте код и жмите «Запустить» — Python
-          подгрузится сам. Ставить ничего не нужно. Поиск по уровням —{" "}
-          <span className="chip">Ctrl K</span>
+          Слева — теория и задание, справа — разбор с настоящими прогонами.
+          Решают на отдельной странице, в терминале прямо в браузере. Следующий
+          уровень открывает пройденный предыдущий, следующий трек — пройденный
+          предыдущий целиком. Поиск — <span className="chip">Ctrl K</span>
         </p>
       </section>
 
-      <Tracks groups={groups} />
+      <Tracks groups={groups} outline={outline()} />
     </div>
   );
 }

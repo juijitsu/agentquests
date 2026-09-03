@@ -1,63 +1,17 @@
 import Link from "next/link";
 import { marked } from "marked";
-import { allLevels, engineSources, findLevel, type Solution } from "@/lib/content";
-import Runner from "../../Runner";
+import { allLevels, directory, findLevel, outline } from "@/lib/content";
+import Gate from "../../Gate";
+import Walkthrough from "../../Walkthrough";
+
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export function generateStaticParams() {
   return allLevels().map((l) => ({ track: l.trackSlug, level: l.slug }));
 }
 
-const TIER_TITLES: Record<string, string> = {
-  novice: "Новичок",
-  advanced: "Продвинутый",
-  pro: "Профессионал",
-};
-
 function html(md: string) {
   return { __html: marked.parse(md, { async: false }) as string };
-}
-
-function Code({ title, note, item }: { title: string; note?: string; item: Solution }) {
-  return (
-    <div style={{ border: "1px solid var(--line)", borderRadius: 6, overflow: "hidden" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          gap: "0.7rem",
-          padding: "0.45rem 0.85rem",
-          background: "var(--panel-2)",
-          fontSize: "0.82rem",
-        }}
-      >
-        <b style={{ fontWeight: 600 }}>{title}</b>
-        {note ? <span style={{ color: "var(--ink-2)", fontSize: "0.78rem" }}>{note}</span> : null}
-        <span
-          style={{
-            marginLeft: "auto",
-            fontFamily: "var(--mono)",
-            fontSize: "0.7rem",
-            color: "var(--ink-3)",
-          }}
-        >
-          {item.file}
-        </span>
-      </div>
-      <pre
-        style={{
-          margin: 0,
-          padding: "0.85rem 1rem",
-          overflowX: "auto",
-          background: "var(--panel)",
-          fontFamily: "var(--mono)",
-          fontSize: "0.78rem",
-          lineHeight: 1.6,
-        }}
-      >
-        {item.code.trimEnd()}
-      </pre>
-    </div>
-  );
 }
 
 export default async function LevelPage({
@@ -73,152 +27,122 @@ export default async function LevelPage({
   const at = siblings.findIndex((l) => l.slug === slug);
   const prev = siblings[at - 1];
   const next = siblings[at + 1];
+  const levelId = `${level.trackSlug}/${level.slug}`;
+  const solveHref = `${base}/${level.trackSlug}/${level.slug}/solve/`;
 
   return (
-    <article
-      style={{
-        maxWidth: "50rem",
-        margin: "0 auto",
-        padding: "clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem)",
-      }}
-    >
+    <Gate outline={outline()} levelId={levelId} titles={directory(base)}>
       <div
         style={{
-          display: "flex",
-          gap: "0.5rem 1rem",
-          flexWrap: "wrap",
-          fontFamily: "var(--mono)",
-          fontSize: "0.72rem",
-          color: "var(--ink-3)",
+          maxWidth: "78rem",
+          margin: "0 auto",
+          padding: "clamp(1.2rem, 4vw, 2.4rem) clamp(1rem, 4vw, 2rem)",
         }}
       >
-        <Link href="/" style={{ color: "var(--ink-2)" }}>
-          ← все треки
-        </Link>
-        <span>{level.track}</span>
-        <span>{level.minutes} мин</span>
-        <span>{level.lang}</span>
-      </div>
-
-      <h1
-        style={{
-          fontSize: "clamp(1.6rem, 4vw, 2.1rem)",
-          lineHeight: 1.15,
-          letterSpacing: "-0.02em",
-          margin: "0.6rem 0 0.5rem",
-          textWrap: "balance",
-        }}
-      >
-        {level.title}
-      </h1>
-      <p style={{ color: "var(--ink-2)", margin: "0 0 1.2rem", fontSize: "1.02rem" }}>
-        {level.idea}
-      </p>
-
-      <pre
-        style={{
-          background: "var(--panel)",
-          border: "1px solid var(--line)",
-          borderRadius: 6,
-          padding: "0.7rem 0.9rem",
-          overflowX: "auto",
-          fontFamily: "var(--mono)",
-          fontSize: "0.74rem",
-          color: "var(--ink-2)",
-          margin: "0 0 2.5rem",
-        }}
-      >
-        python engine/check.py {level.path}/starter/novice/{level.starters.novice?.file ?? "agent.py"}
-      </pre>
-
-      <div className="prose" dangerouslySetInnerHTML={html(level.theory)} />
-      <div className="prose" style={{ marginTop: "3rem" }} dangerouslySetInnerHTML={html(level.method)} />
-      <div className="prose" style={{ marginTop: "3rem" }} dangerouslySetInnerHTML={html(level.task)} />
-
-      {level.runnable ? (
-        <Runner
-          levelId={`${level.trackSlug}/${level.slug}`}
-          engine={engineSources()}
-          scenario={level.scenario}
-          starters={level.starters}
-          solution={level.solution}
-          hintHtml={level.hint ? (marked.parse(level.hint, { async: false }) as string) : ""}
-        />
-      ) : (
-        <p
+        <div
           style={{
-            marginTop: "3rem",
-            padding: "0.8rem 1rem",
-            border: "1px solid var(--line)",
-            borderRadius: 6,
-            color: "var(--ink-2)",
-            fontSize: "0.9rem",
+            display: "flex",
+            gap: "0.5rem 0.8rem",
+            flexWrap: "wrap",
+            alignItems: "baseline",
           }}
         >
-          Этот уровень на {level.lang} — в браузере он не запускается, для него
-          остаются чтение и командная строка.
+          <Link href="/" style={{ fontSize: "0.84rem", color: "var(--ink-2)", fontWeight: 600 }}>
+            ← все треки
+          </Link>
+          <span className="chip">{level.track}</span>
+          <span className="chip">{level.minutes} мин</span>
+          <span className="chip">{level.lang}</span>
+        </div>
+
+        <h1
+          style={{
+            fontSize: "clamp(1.7rem, 4.5vw, 2.3rem)",
+            fontWeight: 780,
+            lineHeight: 1.12,
+            letterSpacing: "-0.025em",
+            margin: "0.7rem 0 0.4rem",
+            textWrap: "balance",
+          }}
+        >
+          {level.title}
+        </h1>
+        <p
+          style={{
+            color: "var(--ink-2)",
+            margin: "0 0 2rem",
+            fontSize: "1.04rem",
+            maxWidth: "42rem",
+          }}
+        >
+          {level.idea}
         </p>
-      )}
 
-      <section style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <h2 style={{ fontSize: "1.28rem", margin: 0, letterSpacing: "-0.015em" }}>Код уровня</h2>
-        <p style={{ margin: 0, color: "var(--ink-2)", fontSize: "0.9rem", maxWidth: "38rem" }}>
-          Заготовки отличаются только количеством подсказок. Эталон стоит
-          открывать после своей попытки — иначе уровень превращается в чтение.
-        </p>
+        <div className="split">
+          <div>
+            <div className="prose" dangerouslySetInnerHTML={html(level.theory)} />
+            <div
+              className="prose"
+              style={{ marginTop: "3rem" }}
+              dangerouslySetInnerHTML={html(level.method)}
+            />
+            <div
+              className="prose"
+              style={{ marginTop: "3rem" }}
+              dangerouslySetInnerHTML={html(level.task)}
+            />
 
-        {(["novice", "advanced", "pro"] as const).map((tier) => {
-          const item = level.starters[tier];
-          return item ? (
-            <Code key={tier} title={TIER_TITLES[tier]} item={item} />
-          ) : null;
-        })}
-
-        {level.solution ? (
-          <details>
-            <summary
+            <nav
               style={{
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                color: "var(--accent)",
-                padding: "0.3rem 0",
+                marginTop: "3rem",
+                paddingTop: "1.2rem",
+                borderTop: "1px solid var(--line)",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "1rem",
+                fontSize: "0.88rem",
+                fontWeight: 600,
               }}
             >
-              Показать эталон
-            </summary>
-            <div style={{ marginTop: "0.6rem" }}>
-              <Code title="Эталон" note="решение, проходящее проверку" item={level.solution} />
-            </div>
-          </details>
-        ) : null}
-      </section>
+              {prev ? (
+                <Link href={`/${prev.trackSlug}/${prev.slug}/`} style={{ color: "var(--ink-2)" }}>
+                  ← {prev.title}
+                </Link>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <Link
+                  href={`/${next.trackSlug}/${next.slug}/`}
+                  style={{ color: "var(--accent)", textAlign: "right" }}
+                >
+                  {next.title} →
+                </Link>
+              ) : (
+                <span />
+              )}
+            </nav>
+          </div>
 
-      <nav
-        style={{
-          marginTop: "3rem",
-          paddingTop: "1.2rem",
-          borderTop: "1px solid var(--line)",
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "1rem",
-          fontSize: "0.88rem",
-        }}
-      >
-        {prev ? (
-          <Link href={`/${prev.trackSlug}/${prev.slug}/`} style={{ color: "var(--ink-2)" }}>
-            ← {prev.title}
-          </Link>
-        ) : (
-          <span />
-        )}
-        {next ? (
-          <Link href={`/${next.trackSlug}/${next.slug}/`} style={{ color: "var(--accent)", textAlign: "right" }}>
-            {next.title} →
-          </Link>
-        ) : (
-          <span />
-        )}
-      </nav>
-    </article>
+          {level.runnable ? (
+            <Walkthrough
+              idea={level.idea}
+              starter={level.starters.novice?.code ?? ""}
+              solution={level.solution?.code ?? null}
+              demo={level.demo}
+              solveHref={solveHref}
+            />
+          ) : (
+            <aside className="card" style={{ padding: "1rem", position: "sticky", top: "4.2rem" }}>
+              <strong style={{ fontWeight: 700 }}>Уровень на {level.lang}</strong>
+              <p style={{ margin: "0.4rem 0 0", fontSize: "0.9rem", color: "var(--ink-2)" }}>
+                В браузере он не запускается — остаются чтение и командная
+                строка. Разбор доступен для уровней на Python и SQL.
+              </p>
+            </aside>
+          )}
+        </div>
+      </div>
+    </Gate>
   );
 }
