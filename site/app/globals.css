@@ -13,12 +13,14 @@
   --accent-soft: #d7ebe6;
   --ok: #1f7a45;
   --no: #a83a2b;
+  color-scheme: light;
   --sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: "Cascadia Mono", "SF Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --ground: #0b1110;
     --panel: #121a18;
     --panel-2: #1a2422;
@@ -35,6 +37,7 @@
 }
 
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --ground: #0b1110;
   --panel: #121a18;
   --panel-2: #1a2422;
@@ -93,15 +96,19 @@ button:focus-visible {
 }
 
 .prose h2 {
-  font-size: 1.12rem;
-  letter-spacing: -0.01em;
-  margin-top: 2rem;
+  font-size: 1.28rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: 2.4rem;
+  padding-top: 0.2rem;
   text-wrap: balance;
 }
 
 .prose h3 {
-  font-size: 0.98rem;
-  margin-top: 1.5rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-top: 1.7rem;
 }
 
 .prose strong {
