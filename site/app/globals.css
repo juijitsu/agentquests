@@ -473,21 +473,21 @@ summary:focus-visible {
 }
 
 .star-tail span:nth-child(1) {
-  width: 15px;
-  height: 15px;
-  margin-right: 20px;
+  width: 12px;
+  height: 12px;
+  margin-right: 15px;
 }
 
 .star-tail span:nth-child(2) {
-  width: 10px;
-  height: 10px;
-  margin-right: 11px;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
 }
 
 .star-tail span:nth-child(3) {
-  width: 6px;
-  height: 6px;
-  margin-right: 5px;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
 }
 
 .star-button {
@@ -500,7 +500,7 @@ summary:focus-visible {
 }
 
 .star-svg {
-  width: clamp(58px, 9vw, 76px);
+  width: clamp(44px, 5vw, 56px);
   height: auto;
   overflow: visible;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));

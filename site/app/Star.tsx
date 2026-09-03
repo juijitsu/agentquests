@@ -129,7 +129,7 @@ export default function Star({ hints, mood, open, onOpenChange, heading }: Props
               Ещё подсказку ({hints.length - shown})
             </button>
           ) : (
-            <p className="star-done">Это всё, что я знаю про этот уровень.</p>
+            <p className="star-done">Больше подсказок у меня нет.</p>
           )}
         </div>
       ) : null}
