@@ -3,6 +3,7 @@ import { marked } from "marked";
 import { allLevels, directory, findLevel, outline } from "@/lib/content";
 import Gate from "../../Gate";
 import Walkthrough from "../../Walkthrough";
+import Terminal from "../../Terminal";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -126,19 +127,33 @@ export default async function LevelPage({
 
           {level.runnable ? (
             <Walkthrough
-              idea={level.idea}
+              starterName={level.starters.novice?.file ?? "agent.py"}
               starter={level.starters.novice?.code ?? ""}
               solution={level.solution?.code ?? null}
+              solutionName={level.solution?.file ?? "agent.py"}
               demo={level.demo}
               solveHref={solveHref}
             />
           ) : (
-            <aside className="card" style={{ padding: "1rem", position: "sticky", top: "4.2rem" }}>
-              <strong style={{ fontWeight: 700 }}>Уровень на {level.lang}</strong>
-              <p style={{ margin: "0.4rem 0 0", fontSize: "0.9rem", color: "var(--ink-2)" }}>
-                В браузере он не запускается — остаются чтение и командная
-                строка. Разбор доступен для уровней на Python и SQL.
-              </p>
+            <aside
+              style={{
+                position: "sticky",
+                top: "4.2rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.7rem",
+              }}
+            >
+              <div className="card" style={{ padding: "1rem" }}>
+                <strong style={{ fontWeight: 700 }}>Уровень на {level.lang}</strong>
+                <p style={{ margin: "0.4rem 0 0", fontSize: "0.9rem", color: "var(--ink-2)" }}>
+                  В браузере он не запускается: там живёт только Python. Значит
+                  запуск один — в своей консоли, из корня репозитория.
+                </p>
+              </div>
+              {/* Команда нужна именно здесь: другого способа проверить себя
+                  на этом уровне нет. Там, где работает кнопка, её не показываем. */}
+              <Terminal title="в своём терминале" output={`$ ${level.command}`} />
             </aside>
           )}
         </div>

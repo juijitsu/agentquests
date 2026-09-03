@@ -1,8 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 const DOTS = ["#ff5f57", "#febc2e", "#28c840"];
+
+/** Рама окна в духе macOS. Одна на весь сайт: вывод проверки, код разбора и
+    редактор на странице решения — это одно и то же окно с разным содержимым. */
+export function TermWindow({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="term">
+      <div className="term-bar">
+        {DOTS.map((colour) => (
+          <span key={colour} className="term-dot" style={{ background: colour }} />
+        ))}
+        <span className="term-title">{title}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
 
 type Props = {
   title?: string;
@@ -11,8 +27,7 @@ type Props = {
   prompt?: string;
 };
 
-/** Окно терминала в духе macOS: три огня, заголовок, моноширинное тело.
-    Цвета вердикта берутся из тех же ✓ и ✗, что печатает движок. */
+/** Тело окна. Цвета вердикта берутся из тех же ✓ и ✗, что печатает движок. */
 export default function Terminal({ title = "agentquests", output, live, prompt }: Props) {
   const body = useRef<HTMLPreElement>(null);
 
@@ -21,13 +36,7 @@ export default function Terminal({ title = "agentquests", output, live, prompt }
   }, [output]);
 
   return (
-    <div className="term">
-      <div className="term-bar">
-        {DOTS.map((c) => (
-          <span key={c} className="term-dot" style={{ background: c }} />
-        ))}
-        <span className="term-title">{title}</span>
-      </div>
+    <TermWindow title={title}>
       <pre ref={body} className="term-body">
         {prompt ? (
           <span style={{ color: "var(--accent)", fontWeight: 650 }}>{prompt}</span>
@@ -51,6 +60,6 @@ export default function Terminal({ title = "agentquests", output, live, prompt }
         })}
         {live ? <span className="caret" /> : null}
       </pre>
-    </div>
+    </TermWindow>
   );
 }

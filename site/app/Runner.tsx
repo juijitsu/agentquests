@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Solution, Tier } from "@/lib/content";
 import { saveDone } from "./progress";
-import Terminal from "./Terminal";
+import Terminal, { TermWindow } from "./Terminal";
 
 const TIER_TITLES: Record<Tier, string> = {
   novice: "Новичок",
@@ -146,23 +146,9 @@ export default function Runner({
         <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>{TIER_NOTES[tier]}</span>
       </div>
 
-      <div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            gap: "0.5rem",
-            marginBottom: "0.35rem",
-          }}
-        >
-          <strong style={{ fontSize: "0.9rem", fontWeight: 680 }}>
-            {starters[tier]?.file ?? "agent.py"}
-          </strong>
-          <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>
-            это заготовка уровня — правьте её здесь
-          </span>
-        </div>
+      <TermWindow title={`${starters[tier]?.file ?? "agent.py"} — правьте здесь`}>
         <textarea
+          className="term-edit"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={(e) => {
@@ -173,21 +159,8 @@ export default function Runner({
           }}
           spellCheck={false}
           rows={Math.min(30, Math.max(14, code.split("\n").length + 1))}
-          style={{
-            width: "100%",
-            background: "var(--panel)",
-            color: "var(--ink)",
-            border: "1px solid var(--line-strong)",
-            borderRadius: 10,
-            padding: "0.85rem 1rem",
-            fontFamily: "var(--mono)",
-            fontSize: "0.8rem",
-            fontWeight: 500,
-            lineHeight: 1.6,
-            resize: "vertical",
-          }}
         />
-      </div>
+      </TermWindow>
 
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
         <button className="btn btn-go" onClick={run} disabled={busy}>

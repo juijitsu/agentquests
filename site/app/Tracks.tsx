@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { levelOpen, readDone, trackOpen, type Outline } from "./progress";
+import { levelOpen, readDone, type Outline } from "./progress";
 
 export type Card = {
   id: string;
@@ -32,13 +32,11 @@ export default function Tracks({
 
   return (
     <section style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "2.4rem" }}>
-      {groups.map((group, at) => {
+      {groups.map((group) => {
         const passed = group.levels.filter((l) => progress.includes(l.id)).length;
-        const openTrack = !known || trackOpen(outline, at, progress);
-        const previous = groups[at - 1];
 
         return (
-          <div key={group.slug} style={{ opacity: openTrack ? 1 : 0.62 }}>
+          <div key={group.slug}>
             <div
               style={{
                 display: "flex",
@@ -67,12 +65,11 @@ export default function Tracks({
                 <span className="chip" style={{ background: "var(--ok-soft)", color: "var(--ok)" }}>
                   пройдено {passed}
                 </span>
-              ) : null}
-              {!openTrack ? (
+              ) : (
                 <span style={{ fontSize: "0.82rem", color: "var(--ink-3)" }}>
-                  🔒 откроется, когда пройден трек «{previous?.title}»
+                  первый уровень открыт — начинать можно отсюда
                 </span>
-              ) : null}
+              )}
             </div>
 
             <div

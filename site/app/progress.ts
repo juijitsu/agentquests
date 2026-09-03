@@ -1,7 +1,14 @@
 /* Прогресс и замки. Хранится у посетителя, считается на клиенте.
 
-   Правило простое и одно на весь курс: следующий уровень открывает
-   пройденный предыдущий, следующий трек — пройденный целиком предыдущий. */
+   Правило одно на весь курс: первый уровень трека открыт всегда, каждый
+   следующий открывает пройденный предыдущий. Треки друг друга не запирают —
+   заходить в «Контекст» вместо «Фундамента» разрешено, и пройти его можно
+   целиком. Порядок внутри трека остаётся обязательным: там уровень честно
+   опирается на предыдущий.
+
+   Замки здесь — вежливость, а не охрана: прогресс лежит у ученика в браузере.
+   Держать оборону на статическом сайте не на чем, а списывать у самого себя
+   незачем. */
 
 export const DONE_KEY = "aq-done";
 
@@ -28,20 +35,8 @@ export function saveDone(levelId: string): string[] {
   return next;
 }
 
-export function trackOpen(outline: Outline, at: number, done: string[]): boolean {
-  if (at <= 0) return true;
-  return outline
-    .slice(0, at)
-    .every((t) => t.levels.every((id) => done.includes(id)));
-}
-
 export function levelOpen(outline: Outline, levelId: string, done: string[]): boolean {
-  const at = outline.findIndex((t) => t.levels.includes(levelId));
-  if (at < 0) return true;
-  if (!trackOpen(outline, at, done)) return false;
-  const inside = outline[at].levels.indexOf(levelId);
-  if (inside <= 0) return true;
-  return done.includes(outline[at].levels[inside - 1]);
+  return blockedBy(outline, levelId, done) === null;
 }
 
 /** Что именно надо пройти, чтобы открылось. Для понятного сообщения. */
@@ -50,15 +45,10 @@ export function blockedBy(
   levelId: string,
   done: string[],
 ): string | null {
-  const at = outline.findIndex((t) => t.levels.includes(levelId));
-  if (at < 0) return null;
-  for (let i = 0; i < at; i++) {
-    const missing = outline[i].levels.find((id) => !done.includes(id));
-    if (missing) return missing;
-  }
-  const inside = outline[at].levels.indexOf(levelId);
-  if (inside > 0 && !done.includes(outline[at].levels[inside - 1])) {
-    return outline[at].levels[inside - 1];
-  }
-  return null;
+  const track = outline.find((t) => t.levels.includes(levelId));
+  if (!track) return null;
+  const at = track.levels.indexOf(levelId);
+  if (at <= 0) return null;
+  const previous = track.levels[at - 1];
+  return done.includes(previous) ? null : previous;
 }

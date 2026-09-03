@@ -4,12 +4,19 @@ import { useEffect, useState } from "react";
 import type { Run } from "@/lib/content";
 import Terminal from "./Terminal";
 
-type Step = { title: string; note: string; kind: "code" | "run"; body: string; bad?: boolean };
+type Step = {
+  title: string;
+  note: string;
+  /** Заголовок окна: имя файла для кода, «проверка» для прогона. */
+  window: string;
+  body: string;
+};
 
 type Props = {
-  idea: string;
+  starterName: string;
   starter: string;
   solution: string | null;
+  solutionName: string;
   demo: { novice?: Run; solution?: Run };
   solveHref: string;
 };
@@ -21,7 +28,7 @@ function buildSteps(p: Props): Step[] {
     {
       title: "Заготовка",
       note: "С этого кода начинают. Он рабочий и делает не то.",
-      kind: "code",
+      window: p.starterName,
       body: p.starter,
     },
   ];
@@ -30,9 +37,8 @@ function buildSteps(p: Props): Step[] {
     steps.push({
       title: "Что она выдаёт",
       note: "Настоящий прогон заготовки — то же, что покажет вам проверка.",
-      kind: "run",
+      window: "проверка",
       body: p.demo.novice.output,
-      bad: p.demo.novice.code !== 0,
     });
   }
 
@@ -40,7 +46,7 @@ function buildSteps(p: Props): Step[] {
     steps.push({
       title: "Что меняется",
       note: "Решение целиком. Открывайте после своей попытки.",
-      kind: "code",
+      window: p.solutionName,
       body: p.solution,
     });
   }
@@ -49,9 +55,8 @@ function buildSteps(p: Props): Step[] {
     steps.push({
       title: "Итог",
       note: "Прогон решения. Все условия сходятся.",
-      kind: "run",
+      window: "проверка",
       body: p.demo.solution.output,
-      bad: p.demo.solution.code !== 0,
     });
   }
 
@@ -73,22 +78,31 @@ export default function Walkthrough(props: Props) {
   const show = !secret || revealed;
 
   return (
-    <aside
-      style={{
-        position: "sticky",
-        top: "4.2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.7rem",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap" }}>
+    <aside className="walk">
+      {/* Управление шагами — в шапке: снизу оно уходит под сгиб, и до кнопок
+          приходится прокручивать всю страницу. */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", flexWrap: "wrap" }}>
         <h2 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 700, letterSpacing: "-0.015em" }}>
           Разбор
         </h2>
         <span className="chip">
           шаг {at + 1} из {steps.length}
         </span>
+        <button
+          className="btn btn-small btn-quiet"
+          style={{ marginLeft: "auto" }}
+          onClick={() => setAt((i) => Math.max(0, i - 1))}
+          disabled={at === 0}
+        >
+          ← Назад
+        </button>
+        <button
+          className="btn btn-small btn-quiet"
+          onClick={() => setAt((i) => Math.min(steps.length - 1, i + 1))}
+          disabled={at === steps.length - 1}
+        >
+          Дальше →
+        </button>
       </div>
 
       <div style={{ display: "flex", gap: "0.3rem" }}>
@@ -117,64 +131,40 @@ export default function Walkthrough(props: Props) {
         </p>
       </div>
 
-      {show ? (
-        step.kind === "run" ? (
-          <Terminal title="проверка" output={step.body} />
+      <div className="walk-body">
+        {show ? (
+          <Terminal title={step.window} output={step.body.trimEnd()} />
         ) : (
-          <pre
+          <div
             className="card"
             style={{
-              margin: 0,
-              padding: "0.8rem 0.9rem",
-              overflow: "auto",
-              maxHeight: "26rem",
-              fontFamily: "var(--mono)",
-              fontSize: "0.74rem",
-              fontWeight: 500,
-              lineHeight: 1.6,
+              padding: "1.6rem 1rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              color: "var(--ink-2)",
+              fontSize: "0.9rem",
             }}
           >
-            {step.body.trimEnd()}
-          </pre>
-        )
-      ) : (
-        <div
-          className="card"
-          style={{
-            padding: "1.6rem 1rem",
-            textAlign: "center",
-            color: "var(--ink-2)",
-            fontSize: "0.9rem",
-          }}
-        >
-          <p style={{ margin: "0 0 0.8rem" }}>
-            Дальше — решение. Сперва попробуйте сами: подсказки в теории хватает.
-          </p>
-          <button className="btn btn-small" onClick={() => setRevealed(true)}>
-            Всё равно показать
-          </button>
-        </div>
-      )}
-
-      <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
-        <button
-          className="btn btn-small btn-quiet"
-          onClick={() => setAt((i) => Math.max(0, i - 1))}
-          disabled={at === 0}
-        >
-          Назад
-        </button>
-        <button
-          className="btn btn-small btn-quiet"
-          onClick={() => setAt((i) => Math.min(steps.length - 1, i + 1))}
-          disabled={at === steps.length - 1}
-        >
-          Дальше
-        </button>
-        <a className="btn btn-small btn-go" href={props.solveHref} style={{ marginLeft: "auto" }}>
-          Решать →
-        </a>
+            <p style={{ margin: "0 0 0.8rem", maxWidth: "22rem" }}>
+              Дальше — решение. Сперва попробуйте сами: подсказки в теории хватает.
+            </p>
+            <button className="btn btn-small" onClick={() => setRevealed(true)}>
+              Всё равно показать
+            </button>
+          </div>
+        )}
       </div>
+
+      <a
+        className="btn btn-go"
+        href={props.solveHref}
+        style={{ textAlign: "center", padding: "0.55rem 1rem" }}
+      >
+        Решать этот уровень →
+      </a>
     </aside>
   );
 }

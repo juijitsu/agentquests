@@ -154,8 +154,11 @@ summary:focus-visible {
   white-space: nowrap;
 }
 
-/* Окно терминала: полоса с тремя огнями, как в macOS. */
+/* Окно терминала: полоса с тремя огнями, как в macOS. Одно на весь сайт —
+   и для вывода проверки, и для кода, и для блоков внутри урока. */
 .term {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   overflow: hidden;
@@ -187,6 +190,9 @@ summary:focus-visible {
 }
 
 .term-body {
+  /* Растёт до высоты окна: пустое место под коротким выводом — не место,
+     а обрезанная панель. Где окно по содержимому, рост ничего не меняет. */
+  flex: 1 1 auto;
   margin: 0;
   padding: 0.85rem 1rem;
   color: var(--term-ink);
@@ -194,11 +200,30 @@ summary:focus-visible {
   font-size: 0.78rem;
   font-weight: 500;
   line-height: 1.62;
+  /* Длинные строки переносим, а не прячем за ползунок: колонка узкая,
+     а таскать её вбок ради конца строки — худшее, что можно предложить. */
   white-space: pre-wrap;
-  overflow-x: auto;
+  overflow-wrap: anywhere;
   min-height: 6rem;
   max-height: 30rem;
   overflow-y: auto;
+}
+
+/* Редактор — то же окно, только тело набирается руками. */
+.term-edit {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  color: var(--term-ink);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.62;
+  resize: vertical;
+  outline-offset: -2px;
 }
 
 .caret::after {
@@ -273,19 +298,37 @@ summary:focus-visible {
   border-radius: 4px;
 }
 
+/* Блоки кода в уроке — то же окно, что и везде: три огня рисует фон полосы,
+   потому что разметка приходит из markdown и своего заголовка не имеет. */
 .prose pre {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  overflow-x: auto;
-  font-size: 0.82rem;
-  line-height: 1.55;
+  background: var(--term);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.prose pre::before {
+  content: "";
+  display: block;
+  height: 26px;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 15px 13px, #ff5f57 5.5px, transparent 6px),
+    radial-gradient(circle at 33px 13px, #febc2e 5.5px, transparent 6px),
+    radial-gradient(circle at 51px 13px, #28c840 5.5px, transparent 6px),
+    var(--panel-2);
 }
 
 .prose pre code {
+  display: block;
+  padding: 0.85rem 1rem;
   background: none;
-  padding: 0;
+  color: var(--term-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   font-weight: 500;
   font-size: inherit;
 }
@@ -329,9 +372,38 @@ summary:focus-visible {
 /* Две колонки: чтение слева, разбор справа. На узком экране — одна. */
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 33rem);
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: start;
+}
+
+/* Разбор — панель ровно в высоту экрана. Шаги разной длины, и если пустить
+   их течь, кнопки «Назад» и «Дальше» уезжают под сгиб: нажать нечем, пока
+   не прокрутишь вниз. Поэтому высота одна на все шаги, листается тело. */
+.walk {
+  position: sticky;
+  top: 4.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  height: calc(100vh - 5.8rem);
+}
+
+.walk-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.walk-body > * {
+  flex: 1;
+  min-height: 0;
+}
+
+.walk .term-body {
+  min-height: 0;
+  max-height: none;
 }
 
 @media (max-width: 60rem) {
@@ -340,5 +412,15 @@ summary:focus-visible {
   }
   .split > aside {
     position: static !important;
+  }
+  /* Одна колонка — панель в экран уже не нужна, она бы резала страницу. */
+  .walk {
+    height: auto;
+  }
+  .walk-body > * {
+    flex: none;
+  }
+  .walk .term-body {
+    max-height: 60vh;
   }
 }

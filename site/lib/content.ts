@@ -23,6 +23,9 @@ export type Level = {
   minutes: string;
   lang: string;
   path: string;
+  /** Запуск в своей консоли. Нужен там, где браузер не выручает: движок сам
+      зовёт node для TypeScript, поэтому команда одна на все языки. */
+  command: string;
   theory: string;
   method: string;
   task: string;
@@ -88,6 +91,42 @@ function codeIn(dir: string): Solution | null {
   return { file, lang: LANGS[ext] ?? ext.slice(1), code: read(join(dir, file)) };
 }
 
+/** На странице задание показывается без двух блоков.
+
+    Первый — команда `python engine/check.py …`: на сайте запускают кнопкой,
+    и длинный путь к файлу там только висит лишней строкой. Второй — таблица
+    «Выберите сложность»: сложность выбирается кнопками на странице решения,
+    и папки starter/ посетителю сайта ни о чём не говорят.
+
+    Из файлов ничего не удаляется: их читают из репозитория и из командной
+    строки, где обе вещи как раз нужны. */
+function taskForWeb(task: string): string {
+  const lines = task.split("\n");
+  const out: string[] = [];
+  let dropping = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith("## ")) dropping = line.startsWith("## Выберите сложность");
+    if (dropping) continue;
+
+    const opensRun =
+      line.startsWith("```") && /^(python|node) engine[/]check/.test(lines[i + 1] ?? "");
+    if (opensRun) {
+      while (i + 1 < lines.length && !lines[i + 1].startsWith("```")) i++;
+      i++;
+      // Подводка «Запустите как есть:» без команды повисает — снимаем и её.
+      while (out.length && !out[out.length - 1].trim()) out.pop();
+      if (out.length && out[out.length - 1].trimEnd().endsWith(":")) out.pop();
+      continue;
+    }
+
+    out.push(line);
+  }
+
+  return out.join("\n").trim();
+}
+
 /** «Если застряли» уже написан в каждом задании — незачем сочинять второй. */
 function hintFrom(task: string): string {
   const at = task.indexOf("## Если застряли");
@@ -126,6 +165,7 @@ export function tracks(): Track[] {
           }
 
           const [trackSlug, slug] = card.id.split("/");
+          const here = `content/ru/${trackDir}/${levelDir}`;
           return {
             slug,
             trackSlug,
@@ -135,10 +175,13 @@ export function tracks(): Track[] {
             idea: card.idea ?? "",
             minutes: card.minutes ?? "",
             lang: solution?.lang ?? "—",
-            path: `content/ru/${trackDir}/${levelDir}`,
+            path: here,
+            command: `python engine/check.py ${here}/starter/novice/${
+              starters.novice?.file ?? "agent.py"
+            }`,
             theory: read(join(dir, "theory.md")),
             method: read(join(dir, "method.md")),
-            task: read(join(dir, "task.md")),
+            task: taskForWeb(read(join(dir, "task.md"))),
             scenario: scenarioIn(dir).code,
             hint: hintFrom(read(join(dir, "task.md"))),
             solution,

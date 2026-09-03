@@ -30,9 +30,6 @@ export default async function SolvePage({
   const siblings = allLevels().filter((l) => l.trackSlug === track);
   const next = siblings[siblings.findIndex((l) => l.slug === slug) + 1];
   const levelId = `${level.trackSlug}/${level.slug}`;
-  const command = `python engine/check.py ${level.path}/starter/novice/${
-    level.starters.novice?.file ?? "agent.py"
-  }`;
 
   return (
     <Gate outline={outline()} levelId={levelId} titles={directory(base)}>
@@ -79,7 +76,7 @@ export default async function SolvePage({
 
         <Runner
           levelId={levelId}
-          command={command}
+          command={level.command}
           engine={engineSources()}
           scenario={level.scenario}
           starters={level.starters}
@@ -88,11 +85,6 @@ export default async function SolvePage({
           nextHref={next ? `${base}/${next.trackSlug}/${next.slug}/` : null}
           nextTitle={next ? next.title : null}
         />
-
-        <p style={{ marginTop: "1.4rem", fontSize: "0.82rem", color: "var(--ink-3)" }}>
-          То же самое в своём терминале:{" "}
-          <code style={{ fontFamily: "var(--mono)" }}>{command}</code>
-        </p>
       </div>
     </Gate>
   );
