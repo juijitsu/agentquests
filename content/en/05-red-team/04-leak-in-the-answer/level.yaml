@@ -1,0 +1,8 @@
+id: red-team/04-leak-in-the-answer
+track: red-team
+order: 4
+title: The leak is in the answer
+idea: The tool checks the agent's rights, not the asker's, and on the way out nobody checks the answer at all.
+minutes: 25
+needs_api_key: false
+unlocks: red-team/05-around-the-wording
