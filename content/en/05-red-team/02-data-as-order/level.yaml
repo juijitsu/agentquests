@@ -1,0 +1,8 @@
+id: red-team/02-data-as-order
+track: red-team
+order: 2
+title: Data as an order
+idea: An injection is a change in the agent's behaviour, not alarming words in a text.
+minutes: 25
+needs_api_key: false
+unlocks: red-team/03-borrowed-argument

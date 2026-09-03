@@ -1,0 +1,8 @@
+id: red-team/01-attack-surface
+track: red-team
+order: 1
+title: Where you can actually push
+idea: The attack surface is the inputs controlled from outside, not the ones you remembered first.
+minutes: 20
+needs_api_key: false
+unlocks: red-team/02-data-as-order
