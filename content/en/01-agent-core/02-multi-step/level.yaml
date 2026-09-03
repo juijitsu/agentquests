@@ -1,0 +1,8 @@
+id: agent-core/02-multi-step
+track: agent-core
+order: 2
+title: Many steps
+idea: The stopping condition comes from the task, not from the model going quiet.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/03-compaction

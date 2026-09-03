@@ -1,0 +1,8 @@
+id: agent-core/09-human
+track: agent-core
+order: 9
+title: The human in the loop
+idea: Asking about everything is not safer — it burns the attention you need for what matters.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/10-boss

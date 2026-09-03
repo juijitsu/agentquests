@@ -1,0 +1,8 @@
+id: agent-core/10-boss
+track: agent-core
+order: 10
+title: Boss: the whole dispatcher
+idea: State is what only you knew; the queue is remembered by the world without you.
+minutes: 45
+needs_api_key: false
+unlocks: context/01-more-is-worse

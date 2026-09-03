@@ -1,0 +1,8 @@
+id: agent-core/03-compaction
+track: agent-core
+order: 3
+title: Compacting the history
+idea: You will have to shorten the history — the choice is what to keep.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/04-scratchpad

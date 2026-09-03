@@ -1,0 +1,8 @@
+id: agent-core/08-resume
+track: agent-core
+order: 8
+title: State and resuming
+idea: The conversation dies with the process — the state of the work has to outlive it.
+minutes: 22
+needs_api_key: false
+unlocks: agent-core/09-human

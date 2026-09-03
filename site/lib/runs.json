@@ -79,6 +79,106 @@
    "code": 0
   }
  },
+ "en/agent-core/01-plan-first": {
+  "novice": {
+   "output": "  Agent Core · Level 01 · Plan before acting\n  agent.py · novice\n\n  The customer asks for delivery time from the border to Newark.\n  The dispatcher answers about the first leg and calls the job done.\n\n  ✗ legs checked: ['Laredo']\n  ✗ agent answer: First leg: Laredo: 6 hours\n  ✓ iterations spent: 2 (6 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  plan: Laredo → Dallas → Chicago → Newark\n\n  Agent Core · Level 01 · Plan before acting\n  agent.py · solution\n\n  The customer asks for delivery time from the border to Newark.\n  The dispatcher answers about the first leg and calls the job done.\n\n  ✓ legs checked: ['Laredo', 'Dallas', 'Chicago', 'Newark']\n  ✓ agent answer: End-to-end time over Laredo → Dallas → Chicago → Newark: 55 hours\n  ✓ iterations spent: 5 (6 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/02-multi-step": {
+  "novice": {
+   "output": "  Agent Core · Level 02 · Many steps\n  agent.py · novice\n\n  Dispatch gives only the next stop, not the whole route.\n  The agent reaches Dallas and declares the job done.\n\n  ✗ stops covered: ['Laredo']\n  ✗ agent answer: Reached Dallas\n  ✓ iterations spent: 2 (10 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 02 · Many steps\n  agent.py · solution\n\n  Dispatch gives only the next stop, not the whole route.\n  The agent reaches Dallas and declares the job done.\n\n  ✓ stops covered: ['Laredo', 'Dallas', 'Chicago']\n  ✓ agent answer: Reached Newark\n  ✓ iterations spent: 6 (10 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/03-compaction": {
+  "novice": {
+   "output": "  Agent Core · Level 03 · Compacting the history\n  agent.py · novice\n\n  Six hops do not fit into the model's window.\n  The dispatcher cuts the history and by the end forgets which rate to bill at.\n\n  ✓ hops covered: 6 of 6\n  ✗ agent answer: Route covered in 30 hours. No rate given, cannot issue an invoice.\n  ✓ iterations spent: 7 (10 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 03 · Compacting the history\n  agent.py · solution\n\n  Six hops do not fit into the model's window.\n  The dispatcher cuts the history and by the end forgets which rate to bill at.\n\n  ✓ hops covered: 6 of 6\n  ✓ agent answer: Route covered in 30 hours. Price: 1200 dollars.\n  ✓ iterations spent: 7 (10 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/04-scratchpad": {
+  "novice": {
+   "output": "  Agent Core · Level 04 · The agent's notepad\n  agent.py · novice\n\n  On the second hop a bridge weight limit turns up.\n  It was not in the request — and by the end of the route nobody remembers it.\n\n  ✓ hops covered: 7 of 7\n  ✓ notepad entries: 1\n  ✗ agent answer: Route is clear, no restrictions found.\n  ✓ iterations spent: 9 (12 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 04 · The agent's notepad\n  agent.py · solution\n\n  On the second hop a bridge weight limit turns up.\n  It was not in the request — and by the end of the route nobody remembers it.\n\n  ✓ hops covered: 7 of 7\n  ✓ notepad entries: 1\n  ✓ agent answer: Route does not work: the bridge limit is 20 tons, and the load is 25 tons.\n  ✓ iterations spent: 9 (12 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/05-replanning": {
+  "novice": {
+   "output": "  Agent Core · Level 05 · Replanning\n  agent.py · novice\n\n  On the second hop the road is closed until the end of the week.\n  The dispatcher drives around it and reports a delivery.\n\n  ✗ plans built: 1 (2 needed — original and detour)\n  ✗ actually driven: ['Laredo', 'Dallas', 'Newark']\n  ✓ agent answer: Freight delivered to Newark.\n  ✓ iterations spent: 5 (12 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 05 · Replanning\n  agent.py · solution\n\n  On the second hop the road is closed until the end of the week.\n  The dispatcher drives around it and reports a delivery.\n\n  ✓ plans built: 2 (2 needed — original and detour)\n  ✓ actually driven: ['Laredo', 'Corpus Christi', 'Houston', 'Dallas', 'Newark']\n  ✓ agent answer: Freight delivered to Newark.\n  ✓ iterations spent: 7 (12 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/06-self-check": {
+  "novice": {
+   "output": "  Agent Core · Level 06 · Self-check\n  agent.py · novice\n\n  Every hop was requested correctly, every answer is right.\n  The total misses the deadline, and nobody said a word about it.\n\n  ✓ hops checked: 4 of 4\n  ✗ result reviews: 0 (one needed)\n  ✗ agent answer: Route assembled: Laredo → Dallas → Chicago → Newark. Total 61 h.\n  ✓ iterations spent: 5 (8 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 06 · Self-check\n  agent.py · solution\n\n  Every hop was requested correctly, every answer is right.\n  The total misses the deadline, and nobody said a word about it.\n\n  ✓ hops checked: 4 of 4\n  ✓ result reviews: 1 (one needed)\n  ✓ agent answer: Route assembled: Laredo → Dallas → Chicago → Newark. Total 61 h. Check: the customer asked for 48 hours, it comes out at 61. The route does not fit the deadline.\n  ✓ iterations spent: 5 (8 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/07-triggers": {
+  "novice": {
+   "output": "  Agent Core · Level 07 · Triggers and the queue\n  agent.py · novice\n\n  The dispatcher is woken by an event, not by a person.\n  While it handles the first three, two more come in.\n\n  ✗ events handled: 3 of 5\n  ✗ left in the inbox: move load TX-441 | detour for TX-903\n  ✗ queue polls: 1, events: 5\n  ✗ agent answer: Shift closed. Events handled: 3.\n  ✓ iterations spent: 3 (8 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 07 · Triggers and the queue\n  agent.py · solution\n\n  The dispatcher is woken by an event, not by a person.\n  While it handles the first three, two more come in.\n\n  ✓ events handled: 5 of 5\n  ✓ left in the inbox: nothing\n  ✓ queue polls: 6, events: 5\n  ✓ agent answer: Shift closed. Events handled: 5.\n  ✓ iterations spent: 5 (8 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/08-resume": {
+  "novice": {
+   "output": "  Agent Core · Level 08 · State and resuming\n  agent.py · novice\n\n  The dispatcher is killed after two bookings. It comes back up with an\n  empty head and books the same legs a second time.\n\n  ✓ first run cut short by a crash: yes\n  ✗ booked: Laredo | Dallas | Laredo | Dallas | Chicago | Newark\n  ✗ paid for twice: Laredo, Dallas\n  ✗ agent answer: Haul assembled. Legs booked: 6.\n  ✗ iterations in the second run: 5 (4 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 08 · State and resuming\n  agent.py · solution\n\n  The dispatcher is killed after two bookings. It comes back up with an\n  empty head and books the same legs a second time.\n\n  ✓ first run cut short by a crash: yes\n  ✓ booked: Laredo | Dallas | Chicago | Newark\n  ✓ paid for twice: nothing\n  ✓ agent answer: Haul assembled. Legs booked: 4.\n  ✓ iterations in the second run: 3 (4 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/09-human": {
+  "novice": {
+   "output": "  Agent Core · Level 09 · The human in the loop\n  agent.py · novice\n\n  The dispatcher on shift reads the first two requests carefully.\n  The agent asks about everything — and what matters lands at the back.\n\n  ✗ sent for approval: 4 (1 needed)\n  ✗ approved without looking: move the pickup time, hire an outside carrier at triple price\n  ✗ carrier hired: yes\n  ✗ reversible actions done: 4 of 3\n  ✓ iterations spent: 5 (6 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 09 · The human in the loop\n  agent.py · solution\n\n  The dispatcher on shift reads the first two requests carefully.\n  The agent asks about everything — and what matters lands at the back.\n\n  ✓ sent for approval: 1 (1 needed)\n  ✓ approved without looking: nothing\n  ✓ carrier hired: no\n  ✓ reversible actions done: 3 of 3\n  ✓ iterations spent: 5 (6 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
+ "en/agent-core/10-boss": {
+  "novice": {
+   "output": "  Agent Core · Level 10 · Boss: the whole dispatcher\n  agent.py · novice\n\n  One shift from wake-up to report. The queue grows as you work,\n  the irreversible needs a human, the process dies after the approval.\n\n  ✗ handled: 3 of 4\n  ✗ disturbed about: breakdown near Memphis, check waybill TX-118, hire an outside carrier at triple price, ice storm on I-80\n  ✗ requests to the human: 4 (1 is enough)\n  ✗ approved blind: ice storm on I-80, hire an outside carrier at triple price\n  ✗ report: Shift closed. Handled: 3, approvals: 3.\n  ✓ iterations in the second run: 3 (6 allowed)\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Agent Core · Level 10 · Boss: the whole dispatcher\n  agent.py · solution\n\n  One shift from wake-up to report. The queue grows as you work,\n  the irreversible needs a human, the process dies after the approval.\n\n  ✓ handled: 4 of 4\n  ✓ disturbed about: hire an outside carrier at triple price\n  ✓ requests to the human: 1 (1 is enough)\n  ✓ approved blind: nothing\n  ✓ report: Shift closed. Handled: 4, approvals: 1.\n  ✓ iterations in the second run: 1 (6 allowed)\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
  "ru/foundations/01-what-is-an-agent": {
   "novice": {
    "output": "  [1] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [2] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [3] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [4] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [5] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [6] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [7] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [8] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [9] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [10] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n\n  Уровень 01 · Что вообще происходит\n  agent.py · novice\n\n  Первый день в транспортной компании. Вам отдали диспетчера,\n  которого начал писать уволившийся разработчик. Он не отвечает.\n\n  ✗ решение упало: RecursionError\n\n  FAIL  Модель просит инструмент снова и снова — значит она не видит\n        его результата. Посмотрите, что происходит с ответом\n        инструмента после вызова.",

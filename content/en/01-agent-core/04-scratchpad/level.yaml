@@ -1,0 +1,8 @@
+id: agent-core/04-scratchpad
+track: agent-core
+order: 4
+title: The agent's notepad
+idea: Not everything is known up front — what surfaces on the way must survive compaction.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/05-replanning

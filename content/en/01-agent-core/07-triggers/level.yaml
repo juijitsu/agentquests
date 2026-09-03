@@ -1,0 +1,8 @@
+id: agent-core/07-triggers
+track: agent-core
+order: 7
+title: Triggers and the queue
+idea: Work arrives while you work — a snapshot of the queue goes stale before it runs out.
+minutes: 20
+needs_api_key: false
+unlocks: agent-core/08-resume
