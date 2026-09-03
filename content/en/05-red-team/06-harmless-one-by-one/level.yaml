@@ -1,0 +1,8 @@
+id: red-team/06-harmless-one-by-one
+track: red-team
+order: 6
+title: Harmless one by one
+idea: A guard fires at the moment its step runs, and by then the state has been moved by earlier steps of the same batch.
+minutes: 30
+needs_api_key: false
+unlocks: red-team/07-poisoned-source
