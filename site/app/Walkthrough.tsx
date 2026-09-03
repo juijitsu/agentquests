@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Run } from "@/lib/content";
 import Terminal from "./Terminal";
+import Retype from "./Retype";
 import { dictFor, type Lang } from "@/lib/i18n";
 
 type Step = {
@@ -11,6 +12,9 @@ type Step = {
   /** Заголовок окна: имя файла для кода, «проверка» для прогона. */
   window: string;
   body: string;
+  /** Откуда набирается этот шаг. Есть только у решения: его показывают не
+      готовым, а собирающимся из заготовки. */
+  from?: string;
 };
 
 type Props = {
@@ -51,6 +55,7 @@ function buildSteps(p: Props): Step[] {
       note: d.stepFixNote,
       window: p.solutionName,
       body: p.solution,
+      from: p.starter,
     });
   }
 
@@ -135,7 +140,16 @@ export default function Walkthrough(props: Props) {
 
       <div className="walk-body">
         {show ? (
-          <Terminal title={step.window} output={step.body.trimEnd()} />
+          step.from !== undefined ? (
+            <Retype
+              from={step.from}
+              to={step.body}
+              title={step.window}
+              lang={props.lang}
+            />
+          ) : (
+            <Terminal title={step.window} output={step.body.trimEnd()} />
+          )
         ) : (
           <div
             className="card"
