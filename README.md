@@ -12,6 +12,8 @@ No API key, no packages to install, no network — levels run on recorded model 
 
 Each level is written in the language the job is actually done in: Python for agent loops, TypeScript where data shape is the point, SQL where the question belongs to the store. One command runs them all — the runner picks the right one. TypeScript levels need Node 24, which strips types with no build step.
 
+**[Read every level in the browser →](https://juijitsu.github.io/agentquests/)** — theory, method and task for all 43, no clone required.
+
 No Python on this machine? Open the repo in a ready-made environment instead — same version the tests run on:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/juijitsu/agentquests)
