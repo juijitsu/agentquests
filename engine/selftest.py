@@ -43,7 +43,7 @@ def chain(levels: list[Path], lang: str) -> list[str]:
     """Метаданные никто не читает, поэтому ломаются они молча.
 
     Проверяем два свойства: файл разбирается в полный набор полей и unlocks
-    ведёт на существующий уровень. Последнему вести пока некуда.
+    ведёт на существующий уровень. Последнему в каждом треке вести пока некуда.
 
     Цепочка проверяется внутри языка: перевод несёт те же id, и общий список
     покрывал бы дыру в одном языке уровнем из другого.
@@ -57,9 +57,15 @@ def chain(levels: list[Path], lang: str) -> list[str]:
             print(f"  ✗ {level.parent.name:<44} level.yaml: полей {len(card)} из {len(FIELDS)}")
             failures.append(level.parent.name)
 
+    # Цепочка живёт внутри трека, как и гейтинг на сайте: первый уровень
+    # каждого трека открыт, треки друг друга не запирают. Значит вести
+    # некуда последнему уровню каждого трека, а не одному на весь язык.
+    tails = {level.parents[1].name: level for level in levels}
+    ends = set(tails.values())
+
     ids = {card["id"] for card in cards.values()}
     for level, card in cards.items():
-        if level is not levels[-1] and card["unlocks"] not in ids:
+        if level not in ends and card["unlocks"] not in ids:
             print(f"  ✗ {level.parent.name:<44} unlocks → {card['unlocks']}: такого уровня нет")
             failures.append(level.parent.name)
 
