@@ -86,13 +86,15 @@ export default function Shell({ entries, home }: { entries: Entry[]; home: strin
           position: "sticky",
           top: 0,
           zIndex: 20,
+          height: "var(--header-h)",
         }}
       >
         <div
           style={{
             maxWidth: "72rem",
             margin: "0 auto",
-            padding: "0.6rem clamp(0.8rem, 4vw, 2rem)",
+            height: "100%",
+            padding: "0 clamp(0.8rem, 4vw, 2rem)",
             display: "flex",
             alignItems: "center",
             gap: "0.8rem",

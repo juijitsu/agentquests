@@ -222,7 +222,7 @@ export default function Runner({
             }
           }}
           spellCheck={false}
-          rows={Math.min(30, Math.max(14, code.split("\n").length + 1))}
+          rows={Math.min(22, Math.max(12, code.split("\n").length + 1))}
         />
       </TermWindow>
 

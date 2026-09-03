@@ -158,11 +158,7 @@ export default function Walkthrough(props: Props) {
         )}
       </div>
 
-      <a
-        className="btn btn-go"
-        href={props.solveHref}
-        style={{ textAlign: "center", padding: "0.55rem 1rem" }}
-      >
+      <a className="btn btn-go walk-cta" href={props.solveHref} style={{ padding: "0.5rem 1.1rem" }}>
         Решать этот уровень →
       </a>
     </aside>

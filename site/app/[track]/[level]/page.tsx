@@ -38,50 +38,54 @@ export default async function LevelPage({
         style={{
           maxWidth: "78rem",
           margin: "0 auto",
-          padding: "clamp(1.2rem, 4vw, 2.4rem) clamp(1rem, 4vw, 2rem)",
+          padding: "var(--top-gap) clamp(1rem, 4vw, 2rem)",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: "0.5rem 0.8rem",
-            flexWrap: "wrap",
-            alignItems: "baseline",
-          }}
-        >
-          <Link href="/" style={{ fontSize: "0.84rem", color: "var(--ink-2)", fontWeight: 600 }}>
-            ← все треки
-          </Link>
-          <span className="chip">{level.track}</span>
-          <span className="chip">{level.minutes} мин</span>
-          <span className="chip">{level.lang}</span>
-        </div>
-
-        <h1
-          style={{
-            fontSize: "clamp(1.7rem, 4.5vw, 2.3rem)",
-            fontWeight: 780,
-            lineHeight: 1.12,
-            letterSpacing: "-0.025em",
-            margin: "0.7rem 0 0.4rem",
-            textWrap: "balance",
-          }}
-        >
-          {level.title}
-        </h1>
-        <p
-          style={{
-            color: "var(--ink-2)",
-            margin: "0 0 2rem",
-            fontSize: "1.04rem",
-            maxWidth: "42rem",
-          }}
-        >
-          {level.idea}
-        </p>
-
+        {/* Заголовок стоит внутри левой колонки, а не над сеткой: только так
+            панель разбора начинается там же, где потом закрепляется. */}
         <div className="split">
           <div>
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem 0.8rem",
+                flexWrap: "wrap",
+                alignItems: "baseline",
+              }}
+            >
+              <Link
+                href="/"
+                style={{ fontSize: "0.84rem", color: "var(--ink-2)", fontWeight: 600 }}
+              >
+                ← все треки
+              </Link>
+              <span className="chip">{level.track}</span>
+              <span className="chip">{level.minutes} мин</span>
+              <span className="chip">{level.lang}</span>
+            </div>
+
+            <h1
+              style={{
+                fontSize: "clamp(1.7rem, 4.5vw, 2.3rem)",
+                fontWeight: 780,
+                lineHeight: 1.12,
+                letterSpacing: "-0.025em",
+                margin: "0.7rem 0 0.4rem",
+                textWrap: "balance",
+              }}
+            >
+              {level.title}
+            </h1>
+            <p
+              style={{
+                color: "var(--ink-2)",
+                margin: "0 0 2.4rem",
+                fontSize: "1.04rem",
+              }}
+            >
+              {level.idea}
+            </p>
+
             <div className="prose" dangerouslySetInnerHTML={html(level.theory)} />
             <div
               className="prose"
