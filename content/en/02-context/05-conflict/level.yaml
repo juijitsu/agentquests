@@ -1,0 +1,8 @@
+id: context/05-conflict
+track: context
+order: 5
+title: Sources disagree
+idea: When sources disagree, choosing silently invents an answer the data does not hold.
+minutes: 20
+needs_api_key: false
+unlocks: context/06-budget

@@ -1,0 +1,12 @@
+-- Level 04 · pro.
+--
+-- Table:
+--     rates(lane TEXT, quoted_at TEXT, price REAL)
+--
+-- Return one row per lane — the current rate, that is the one whose
+-- quoted_at is the latest within its own lane.
+--
+-- Columns in the answer: lane, price. Exactly one query.
+--
+-- Careful: the latest row in the whole table belongs to a different lane
+-- from the one people ask about most.

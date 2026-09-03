@@ -1,0 +1,8 @@
+id: context/01-more-is-worse
+track: context
+order: 1
+title: More is not better
+idea: A fact inside the window does not yet mean the model will see it.
+minutes: 18
+needs_api_key: false
+unlocks: context/02-boundaries

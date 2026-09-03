@@ -1,0 +1,8 @@
+id: context/04-freshness
+track: context
+order: 4
+title: Freshness
+idea: Data is appended, not overwritten — with no time filter you take whatever comes first.
+minutes: 20
+needs_api_key: false
+unlocks: context/05-conflict

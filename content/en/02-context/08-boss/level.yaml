@@ -1,0 +1,8 @@
+id: context/08-boss
+track: context
+order: 8
+title: Boss: a brief on a budget
+idea: Under budget pressure the first thing you want to drop is exactly what you must not.
+minutes: 45
+needs_api_key: false
+unlocks: retrieval/01-words-vs-meaning
