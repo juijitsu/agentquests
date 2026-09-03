@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Solution, Tier } from "@/lib/content";
 import { saveDone } from "./progress";
 import Terminal, { TermWindow } from "./Terminal";
+import Star, { type Hint } from "./Star";
 
 const TIER_TITLES: Record<Tier, string> = {
   novice: "Новичок",
@@ -30,6 +31,69 @@ type Props = {
 };
 
 type State = "idle" | "busy" | "done";
+
+/** Что звезда знает про положение дел. Всё берётся из настоящего вывода
+    проверки: строки с ✗ — это условия, которые не сошлись, а строка FAIL
+    несёт объяснение самого движка. Ничего не сочиняется. */
+function hintsFrom(
+  output: string,
+  verdict: number | null,
+  tier: Tier,
+  hasNovice: boolean,
+  levelHint: string,
+): Hint[] {
+  const lines = output.split("\n").map((l) => l.trim());
+  const failed = lines.filter((l) => l.startsWith("✗")).map((l) => l.slice(1).trim());
+
+  // Объяснение движка занимает несколько строк: заголовок FAIL и перенос
+  // фразы под ним. Взять одну строку — значит оборвать её на полуслове.
+  const at = lines.findIndex((l) => l.startsWith("FAIL"));
+  let said = "";
+  if (at >= 0) {
+    const block = [lines[at].replace(/^FAIL\s*/, "")];
+    for (let i = at + 1; i < lines.length && lines[i]; i++) block.push(lines[i]);
+    said = block.join(" ").trim();
+  }
+
+  const hints: Hint[] = [];
+
+  if (verdict === null) {
+    hints.push({
+      title: "с чего начать",
+      body: "Проверка ещё не запускалась. Запустите заготовку как есть — она назовёт условия, которые не сошлись. Это быстрее, чем вычитывать код глазами.",
+    });
+  } else if (verdict === 0) {
+    hints.push({
+      title: "всё сошлось",
+      body: "Условия выполнены, уровень засчитан. Следующий уже открыт — ссылка в зелёной полосе.",
+    });
+  } else if (failed.length > 0) {
+    hints.push({
+      title: failed.length === 1 ? "не сошлось условие" : "не сошлись условия",
+      body: failed.join("\n"),
+    });
+  } else {
+    hints.push({
+      title: "прогон не дошёл до проверки",
+      body: "Условия даже не считались. Смотрите вывод целиком: там сказано, на чём всё оборвалось.",
+    });
+  }
+
+  if (said) hints.push({ title: "что говорит движок", body: said.replace(/^FAIL\s*/, "") });
+  if (levelHint) hints.push({ title: "подсказка уровня", body: levelHint, html: true });
+
+  if (verdict !== 0) {
+    hints.push({
+      title: "куда ещё посмотреть",
+      body:
+        (tier !== "novice" && hasNovice
+          ? "Сложность «Новичок» показывает место правки: нужная строка помечена TODO. "
+          : "") + "В разборе рядом с уроком второй шаг показывает, что выдаёт заготовка, третий — решение целиком.",
+    });
+  }
+
+  return hints;
+}
 
 export default function Runner({
   levelId,
@@ -221,25 +285,27 @@ export default function Runner({
               {nextTitle} →
             </a>
           ) : null}
-          {!passed && hintHtml ? (
+          {!passed ? (
             <button
               className="btn btn-small"
               style={{ marginLeft: "auto" }}
               onClick={() => setHintOpen((was) => !was)}
             >
-              {hintOpen ? "Скрыть подсказку" : "Подсказка"}
+              {hintOpen ? "Убрать подсказки" : "Спросить звезду"}
             </button>
           ) : null}
         </div>
       ) : null}
 
-      {hintOpen && hintHtml ? (
-        <div
-          className="prose card"
-          style={{ padding: "0.9rem 1.1rem", maxWidth: "none" }}
-          dangerouslySetInnerHTML={{ __html: hintHtml }}
-        />
-      ) : null}
+      {/* Подсказки живут в одном месте — у звезды. Кнопка выше только
+          открывает её облачко, второй панели с подсказкой на странице нет. */}
+      <Star
+        hints={hintsFrom(output, verdict, tier, !!starters.novice, hintHtml)}
+        mood={busy ? "think" : passed ? "cheer" : verdict === null ? "idle" : "sad"}
+        open={hintOpen}
+        onOpenChange={setHintOpen}
+        heading={passed ? "Готово!" : "Чем помочь?"}
+      />
     </div>
   );
 }

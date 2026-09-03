@@ -4,6 +4,7 @@ import { allLevels, directory, findLevel, outline } from "@/lib/content";
 import Gate from "../../Gate";
 import Walkthrough from "../../Walkthrough";
 import Terminal from "../../Terminal";
+import LevelStar from "../../LevelStar";
 
 const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -157,6 +158,29 @@ export default async function LevelPage({
             </aside>
           )}
         </div>
+
+        {/* Подсказки уровня — только из самого уровня: его смысл, его блок
+            «Если застряли» и способ запуска. Ничего сверх того, что написано. */}
+        <LevelStar
+          hints={[
+            { title: "про что уровень", body: level.idea },
+            ...(level.hint
+              ? [
+                  {
+                    title: "подсказка уровня",
+                    body: marked.parse(level.hint, { async: false }) as string,
+                    html: true,
+                  },
+                ]
+              : []),
+            {
+              title: "где решать",
+              body: level.runnable
+                ? "Кнопка «Решать этот уровень» открывает страницу с терминалом прямо в браузере. Заготовка там уже лежит — её и правят."
+                : `Этот уровень в браузере не идёт. Запуск в своей консоли, из корня репозитория: ${level.command}`,
+            },
+          ]}
+        />
       </div>
     </Gate>
   );
