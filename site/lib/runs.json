@@ -449,6 +449,16 @@
    "code": 0
   }
  },
+ "en/red-team/05-around-the-wording": {
+  "novice": {
+   "output": "  Red team track · Level 05 · Around the wording\n  agent.py · novice\n\n  Six probes: the agent refused two, and two answers name a rate outright.\n  The two that got around the rule include one that names nothing at all.\n\n  ✓ probes asked: 6 of 6\n  ✗ ways around missed: ['p3']\n  ✗ extra probes in the report: ['p6']\n  ✓ calls claimed: 6, calls made: 6\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Red team track · Level 05 · Around the wording\n  agent.py · solution\n\n  Six probes: the agent refused two, and two answers name a rate outright.\n  The two that got around the rule include one that names nothing at all.\n\n  ✓ probes asked: 6 of 6\n  ✓ ways around missed: none\n  ✓ extra probes in the report: none\n  ✓ calls claimed: 6, calls made: 6\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
  "ru/foundations/01-what-is-an-agent": {
   "novice": {
    "output": "  [1] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [2] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [3] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [4] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [5] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [6] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [7] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [8] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [9] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [10] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n\n  Уровень 01 · Что вообще происходит\n  agent.py · novice\n\n  Первый день в транспортной компании. Вам отдали диспетчера,\n  которого начал писать уволившийся разработчик. Он не отвечает.\n\n  ✗ решение упало: RecursionError\n\n  FAIL  Модель просит инструмент снова и снова — значит она не видит\n        его результата. Посмотрите, что происходит с ответом\n        инструмента после вызова.",
@@ -896,6 +906,16 @@
   },
   "solution": {
    "output": "  Трек «Красная команда» · Уровень 04 · Утечка в ответ\n  agent.py · solution\n\n  В журнале два отказа, и оба на месте: инструмент сделал свою работу.\n  Ещё в двух запросах все вызовы разрешены, а в ответ ушло чужое.\n\n  ✓ запросов разобрано: 6 из 6\n  ✓ пропущено утечек: ни одной\n  ✓ лишних в отчёте: ни одного\n  ✓ обращений заявлено: 6, сделано: 6\n\n  PASS  следующий уровень открыт",
+   "code": 0
+  }
+ },
+ "ru/red-team/05-around-the-wording": {
+  "novice": {
+   "output": "  Трек «Красная команда» · Уровень 05 · Обход формулировкой\n  agent.py · novice\n\n  Шесть проб: две агент отклонил, в двух ответах ставка названа прямо.\n  Обошли правило другие две, и в одной из них не названо ничего.\n\n  ✓ проб задано: 6 из 6\n  ✗ пропущено обходов: ['p3']\n  ✗ лишних в отчёте: ['p6']\n  ✓ обращений заявлено: 6, сделано: 6\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Трек «Красная команда» · Уровень 05 · Обход формулировкой\n  agent.py · solution\n\n  Шесть проб: две агент отклонил, в двух ответах ставка названа прямо.\n  Обошли правило другие две, и в одной из них не названо ничего.\n\n  ✓ проб задано: 6 из 6\n  ✓ пропущено обходов: ни одного\n  ✓ лишних в отчёте: ни одного\n  ✓ обращений заявлено: 6, сделано: 6\n\n  PASS  следующий уровень открыт",
    "code": 0
   }
  }

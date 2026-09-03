@@ -1,0 +1,8 @@
+id: red-team/05-around-the-wording
+track: red-team
+order: 5
+title: Обход формулировкой
+idea: Правило запрещает слова, а защищает цель, и проверять его словами правила значит проверять только то, что оно и так закрывает.
+minutes: 25
+needs_api_key: false
+unlocks: red-team/06-harmless-one-by-one
