@@ -1,0 +1,8 @@
+id: python-novice/04-lists
+track: python-novice
+order: 4
+title: Ставка посередине
+idea: Место элемента в списке зависит от порядка: пока список не выстроен, его середина случайна, а sorted() даёт новый список, не трогая старый.
+minutes: 30
+needs_api_key: false
+unlocks: python-novice/05-dicts

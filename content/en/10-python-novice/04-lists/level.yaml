@@ -1,0 +1,8 @@
+id: python-novice/04-lists
+track: python-novice
+order: 4
+title: The middle bid
+idea: Where an element sits in a list depends on order: until the list is lined up its middle is an accident, and sorted() gives a new list without touching the old one.
+minutes: 30
+needs_api_key: false
+unlocks: python-novice/05-dicts
