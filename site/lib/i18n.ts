@@ -62,6 +62,14 @@ const ru = {
     "ts-middle": "TypeScript: средний",
     "ts-senior": "TypeScript: старший",
   } as Record<string, string>,
+  /* Отметки прогресса. Число попыток и дата — факты, посчитанные по
+     засчитанным прогонам; ничего не придумано. */
+  markPassed: (when: string | null, runs: number) =>
+    when ? `сдан ${when}${runs ? ` · попыток: ${runs}` : ""}` : "сдан",
+  markStuck: (when: string, runs: number) => `не сошлось ${when} · попыток: ${runs}`,
+  markLast: (when: string, runs: number) =>
+    `Прошлый раз, ${when}. Попыток: ${runs}. Не сошлось:`,
+
   passed: (n: number) => `пройдено ${n}`,
   firstOpen: "первый уровень открыт — начинать можно отсюда",
 
@@ -309,6 +317,14 @@ const en: Dict = {
     "ts-middle": "TypeScript, middle",
     "ts-senior": "TypeScript, senior",
   },
+  /* Progress marks. The attempt count and the date are facts counted from
+     runs that actually finished; nothing is invented. */
+  markPassed: (when: string | null, runs: number) =>
+    when ? `passed ${when}${runs ? ` · attempts: ${runs}` : ""}` : "passed",
+  markStuck: (when: string, runs: number) => `did not pass, ${when} · attempts: ${runs}`,
+  markLast: (when: string, runs: number) =>
+    `Last time, ${when}. Attempts: ${runs}. What did not hold:`,
+
   passed: (n: number) => `${n} done`,
   firstOpen: "first level is open — you can start here",
 

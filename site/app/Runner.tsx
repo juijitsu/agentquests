@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Solution, Tier } from "@/lib/content";
-import { saveDone } from "./progress";
+import { noMarks, readMarks, saveRun, watchMarks, whenText } from "./progress";
 import Editor from "./Editor";
 import Terminal, { TermWindow } from "./Terminal";
 import Star from "./Star";
@@ -50,6 +50,13 @@ export default function Runner({
   const seq = useRef(0);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [touched, setTouched] = useState(false);
+  /* Прогон в этой сессии уже был. Флаг отдельный, а не выведенный из verdict:
+     reset() зовётся тремя кнопками — смена сложности, «вернуть заготовку»,
+     «подставить эталон» — и обнуляет verdict. Без флага прошлая отметка
+     возвращалась бы на экран поверх свежего прогона. */
+  const [ran, setRan] = useState(false);
+  const marks = useSyncExternalStore(watchMarks, readMarks, noMarks);
+  const mark = marks[levelId];
 
   useEffect(() => () => worker.current?.terminate(), []);
 
@@ -126,7 +133,7 @@ export default function Runner({
       setState("done");
       setOutput(data.text ?? "");
       setVerdict(data.code ?? 1);
-      if (data.code === 0) saveDone(levelId);
+      saveRun(levelId, data.code ?? 1, data.text ?? "");
     };
 
     worker.current = w;
@@ -136,6 +143,7 @@ export default function Runner({
   const run = useCallback(() => {
     const w = ensureWorker();
 
+    setRan(true);
     setState("busy");
     setOutput("");
     setVerdict(null);
@@ -173,6 +181,30 @@ export default function Runner({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {/* На чём остановились в прошлый раз. Показывается до первого прогона
+          этой сессии и только если было чему не сойтись: у сданного уровня
+          отметка стоит на полке, здесь она была бы лишней. */}
+      {!ran && mark?.miss?.length ? (
+        <div
+          className="card"
+          style={{
+            padding: "0.7rem 0.9rem",
+            fontSize: "0.85rem",
+            background: "var(--no-soft)",
+            borderColor: "var(--no)",
+          }}
+        >
+          <strong style={{ fontWeight: 680 }}>
+            {dict.markLast(mark.at ? whenText(mark.at, lang) : "", mark.runs)}
+          </strong>
+          <ul style={{ margin: "0.4rem 0 0", paddingLeft: "1.1rem", color: "var(--no)" }}>
+            {mark.miss.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
         {tiers.map((t) => (
           <button

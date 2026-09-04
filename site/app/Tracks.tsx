@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { levelOpen, readDone, type Outline } from "./progress";
+import { useSyncExternalStore } from "react";
+import {
+  levelOpen,
+  noMarks,
+  readMarks,
+  watchMarks,
+  whenText,
+  type Outline,
+} from "./progress";
 import { dictFor, type Lang } from "@/lib/i18n";
 
 export type Card = {
@@ -25,14 +32,14 @@ export default function Tracks({
   lang: Lang;
 }) {
   const dict = dictFor(lang);
-  const [done, setDone] = useState<string[] | null>(null);
-
-  useEffect(() => setDone(readDone()), []);
-
-  // Пока прогресс не прочитан, считаем всё открытым: замки, мигающие
-  // на каждой загрузке, раздражают сильнее, чем доля секунды без них.
-  const progress = done ?? [];
-  const known = done !== null;
+  /* Прогресс читается подпиской, а не эффектом: на сервере его нет, и
+     установка состояния из эффекта тянула бы лишний рендер. Объект между
+     записями один и тот же, поэтому подписка не зацикливается. */
+  const marks = useSyncExternalStore(watchMarks, readMarks, noMarks);
+  const progress = Object.keys(marks).filter((id) => marks[id].done);
+  // На сервере записей нет, и до гидратации считаем всё открытым: замки,
+  // мигающие на каждой загрузке, раздражают сильнее, чем доля секунды без них.
+  const known = marks !== noMarks();
 
   return (
     <section style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "2.4rem" }}>
@@ -123,6 +130,26 @@ export default function Tracks({
                     >
                       {level.idea}
                     </p>
+                    {/* Отметка — только у тронутых уровней. У остальных карточка
+                        выглядит ровно как раньше. */}
+                    {(() => {
+                      const mark = marks[level.id];
+                      if (!mark) return null;
+                      const when = mark.at ? whenText(mark.at, lang) : null;
+                      return (
+                        <p
+                          style={{
+                            margin: "0.3rem 0 0",
+                            fontSize: "0.78rem",
+                            color: mark.done ? "var(--ok)" : "var(--ink-3)",
+                          }}
+                        >
+                          {mark.done
+                            ? dict.markPassed(when, mark.runs)
+                            : dict.markStuck(when ?? "", mark.runs)}
+                        </p>
+                      );
+                    })()}
                   </Tag>
                 );
               })}
