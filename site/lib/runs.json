@@ -479,6 +479,16 @@
    "code": 0
   }
  },
+ "en/python-novice/02-variables": {
+  "novice": {
+   "output": "  Python from scratch · Level 02 · Add the deadhead\n  agent.py · novice\n\n  The miles arrive from the board as text, and a number has to be added to them.\n  The task shows two loads; the check runs six.\n\n  ✓ returned text: yes\n  ✗ loads matched: 0 of 6\n  ✗ first difference: on the miles \"1450\"\n        expected: 1450 + 60 = 1510\n        got:      1450 + 60 = 145060\n                               ^\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Python from scratch · Level 02 · Add the deadhead\n  agent.py · solution\n\n  The miles arrive from the board as text, and a number has to be added to them.\n  The task shows two loads; the check runs six.\n\n  ✓ returned text: yes\n  ✓ loads matched: 6 of 6\n  ✓ first difference: all matched\n\n  PASS  the next level is open",
+   "code": 0
+  }
+ },
  "ru/foundations/01-what-is-an-agent": {
   "novice": {
    "output": "  [1] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [2] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [3] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [4] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [5] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [6] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [7] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [8] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [9] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n  [10] get_shipment_status({'shipment_id': 'TX-4471'}) -> в пути, переход Laredo, прибытие через 4 дня\n\n  Уровень 01 · Что вообще происходит\n  agent.py · novice\n\n  Первый день в транспортной компании. Вам отдали диспетчера,\n  которого начал писать уволившийся разработчик. Он не отвечает.\n\n  ✗ решение упало: RecursionError\n\n  FAIL  Модель просит инструмент снова и снова — значит она не видит\n        его результата. Посмотрите, что происходит с ответом\n        инструмента после вызова.",
@@ -956,6 +966,16 @@
   },
   "solution": {
    "output": "  Курс «Python: старт» · Уровень 01 · Установка и первый запуск\n  agent.py · solution\n\n  Функция solve получает имя и должна вернуть приветствие.\n  В задании показаны два имени, проверка прогонит пять.\n\n  ✓ вернулся текст: да\n  ✓ совпало имён: 5 из 5\n  ✓ первое расхождение: все совпали\n\n  PASS  следующий уровень открыт",
+   "code": 0
+  }
+ },
+ "ru/python-novice/02-variables": {
+  "novice": {
+   "output": "  Курс «Python: старт» · Уровень 02 · Прибавить порожний пробег\n  agent.py · novice\n\n  Пробег приходит с доски текстом, а прибавить к нему надо число.\n  В задании показаны две заявки, проверка прогонит шесть.\n\n  ✓ вернулся текст: да\n  ✗ совпало заявок: 0 из 6\n  ✗ первое расхождение: на пробеге «1450»\n        ждали:    1450 + 60 = 1510\n        получили: 1450 + 60 = 145060\n                               ^\n\n  FAIL",
+   "code": 1
+  },
+  "solution": {
+   "output": "  Курс «Python: старт» · Уровень 02 · Прибавить порожний пробег\n  agent.py · solution\n\n  Пробег приходит с доски текстом, а прибавить к нему надо число.\n  В задании показаны две заявки, проверка прогонит шесть.\n\n  ✓ вернулся текст: да\n  ✓ совпало заявок: 6 из 6\n  ✓ первое расхождение: все совпали\n\n  PASS  следующий уровень открыт",
    "code": 0
   }
  }

@@ -1,0 +1,8 @@
+id: python-novice/02-variables
+track: python-novice
+order: 2
+title: Прибавить порожний пробег
+idea: Текст, похожий на число, числом не является: плюс склеивает текст и складывает числа, а int() и str() переводят значение с одной стороны на другую.
+minutes: 25
+needs_api_key: false
+unlocks: python-novice/03-strings
