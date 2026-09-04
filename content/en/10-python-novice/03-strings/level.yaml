@@ -1,0 +1,8 @@
+id: python-novice/03-strings
+track: python-novice
+order: 3
+title: The whiteboard label
+idea: String methods do not change a string, they hand back a new one: the result has to be caught in a name, or the cleaning runs for nothing.
+minutes: 30
+needs_api_key: false
+unlocks: python-novice/04-lists

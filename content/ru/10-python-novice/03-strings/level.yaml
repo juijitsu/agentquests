@@ -1,0 +1,8 @@
+id: python-novice/03-strings
+track: python-novice
+order: 3
+title: Метка на доске
+idea: Строковые методы не меняют строку, а возвращают новую: результат надо поймать в имя, иначе уборка проходит вхолостую.
+minutes: 30
+needs_api_key: false
+unlocks: python-novice/04-lists
